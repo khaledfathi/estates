@@ -14,6 +14,10 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    /************* General ***************/
+    void customSetupUI();
+    /*************************************/
+
 
 private:
     Ui::MainWindow *ui;

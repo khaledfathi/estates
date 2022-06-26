@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/icon">
         <file>icon/app_icon.ico</file>
+        <file>icon/search.png</file>
+        <file>icon/money.png</file>
+        <file>icon/user.png</file>
+        <file>icon/estate.png</file>
+        <file>icon/resit.png</file>
     </qresource>
 </RCC>
