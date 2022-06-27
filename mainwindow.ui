@@ -101,7 +101,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -393,6 +393,11 @@
                <item>
                 <property name="text">
                  <string>اجمالى المبالغ المحصلة</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>اجمالى المبالغ المحصلة عن فترة </string>
                 </property>
                </item>
                <item>
@@ -898,7 +903,7 @@
              <string>العقار</string>
             </property>
             <property name="buddy">
-             <cstring>comboBoxMoneyEstate_2</cstring>
+             <cstring>comboBoxMoneyEstate</cstring>
             </property>
            </widget>
           </item>
@@ -1023,7 +1028,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBoxMoneyEstate_2">
+           <widget class="QComboBox" name="comboBoxMoneyEstate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -2313,7 +2318,7 @@
   <tabstop>buttonQuery</tabstop>
   <tabstop>buttonExit</tabstop>
   <tabstop>checkBoxAddFreeMoney</tabstop>
-  <tabstop>comboBoxMoneyEstate_2</tabstop>
+  <tabstop>comboBoxMoneyEstate</tabstop>
   <tabstop>comboBoxMoneyRenter</tabstop>
   <tabstop>dateEditMoneyDate</tabstop>
   <tabstop>doubleSpinBoxMony</tabstop>

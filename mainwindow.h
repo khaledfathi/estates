@@ -15,9 +15,43 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     /************* General ***************/
-    void customSetupUI();
+    void defaultSetupUI();
     /*************************************/
 
+    /************* Query Tab Section ***************/
+    void defaultQueryTabUI();
+    void setQueryTabFieldsStatus(bool state);
+    //Actions
+    void actionReportTypeChanges();
+    /***********************************************/
+
+    /************* Money Tab Section ***************/
+    void defaultMoneyTabUI();
+    void setMoneyTabFieldsStatus(bool state);
+    //Actions
+    void actionAddFreeMoneyChanges();
+    /***********************************************/
+
+    /************* Renter Tab Section ***************/
+    /************************************************/
+
+    /************* Money Tab Section ***************/
+    /***********************************************/
+
+    /************* Estate Tab Section ***************/
+    /************************************************/
+
+    /************* Recipet Tab Section ***************/
+    /************************************************/
+
+
+private slots:
+    //*** SIGNAL AND SLOT for Query Tab ***
+    void on_comboBoxQueryReport_currentIndexChanged(int index);
+    void on_checkBoxQueryRenter_stateChanged(int arg1);
+
+    //*** SIGNAL AND SLOT for Money Tab ***
+    void on_checkBoxAddFreeMoney_stateChanged(int arg1);
 
 private:
     Ui::MainWindow *ui;
