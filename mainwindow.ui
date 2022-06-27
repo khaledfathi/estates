@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>estates</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::RightToLeft</enum>
@@ -21,7 +21,7 @@
     <item row="1" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="1">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="buttonExit">
         <property name="minimumSize">
          <size>
           <width>50</width>
@@ -64,7 +64,7 @@
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QTabWidget" name="tabWidget">
+       <widget class="QTabWidget" name="tabWidgetMain">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -101,7 +101,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>4</number>
+         <number>0</number>
         </property>
         <property name="iconSize">
          <size>
@@ -124,7 +124,7 @@
         <property name="tabBarAutoHide">
          <bool>false</bool>
         </property>
-        <widget class="QWidget" name="tab">
+        <widget class="QWidget" name="tabQuery">
          <attribute name="icon">
           <iconset resource="resourse.qrc">
            <normaloff>:/icon/icon/search.png</normaloff>:/icon/icon/search.png</iconset>
@@ -142,7 +142,7 @@
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
              <item row="3" column="3">
-              <widget class="QDateEdit" name="dateEdit_5">
+              <widget class="QDateEdit" name="dateEditQueryDateTo">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -169,7 +169,7 @@
               </widget>
              </item>
              <item row="4" column="0">
-              <widget class="QCheckBox" name="checkBox">
+              <widget class="QCheckBox" name="checkBoxQueryRenter">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -193,7 +193,7 @@
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_21">
+              <widget class="QLabel" name="labelQueryEstate">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -214,10 +214,13 @@
                <property name="text">
                 <string>استعلام عن عقار</string>
                </property>
+               <property name="buddy">
+                <cstring>comboBoxQueryEstate</cstring>
+               </property>
               </widget>
              </item>
              <item row="4" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBox_10">
+              <widget class="QComboBox" name="comboBoxQueryRenter">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -288,7 +291,7 @@
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="QDateEdit" name="dateEdit_4">
+              <widget class="QDateEdit" name="dateEditQueryDateFrom">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -318,7 +321,7 @@
               </widget>
              </item>
              <item row="0" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBox_8">
+              <widget class="QComboBox" name="comboBoxQueryEstate">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -354,7 +357,7 @@
               </widget>
              </item>
              <item row="2" column="1" colspan="3">
-              <widget class="QComboBox" name="comboBox_7">
+              <widget class="QComboBox" name="comboBoxQueryReport">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
                  <horstretch>0</horstretch>
@@ -426,7 +429,7 @@
                  </spacer>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QPushButton" name="pushButton_8">
+                 <widget class="QPushButton" name="buttonQuery">
                   <property name="minimumSize">
                    <size>
                     <width>150</width>
@@ -468,7 +471,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QLabel" name="label_27">
+              <widget class="QLabel" name="labelQueryDateFrom">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -489,10 +492,13 @@
                <property name="text">
                 <string>عن الفترة</string>
                </property>
+               <property name="buddy">
+                <cstring>dateEditQueryDateFrom</cstring>
+               </property>
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QLabel" name="label_20">
+              <widget class="QLabel" name="labelQueryReport">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -513,10 +519,13 @@
                <property name="text">
                 <string>عرض تقرير عن </string>
                </property>
+               <property name="buddy">
+                <cstring>comboBoxQueryReport</cstring>
+               </property>
               </widget>
              </item>
              <item row="3" column="2">
-              <widget class="QLabel" name="label_28">
+              <widget class="QLabel" name="labelQueryDateTo">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -540,6 +549,9 @@
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
                </property>
+               <property name="buddy">
+                <cstring>dateEditQueryDateTo</cstring>
+               </property>
               </widget>
              </item>
             </layout>
@@ -547,7 +559,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_2">
+        <widget class="QWidget" name="tabMoney">
          <attribute name="icon">
           <iconset resource="resourse.qrc">
            <normaloff>:/icon/icon/money.png</normaloff>:/icon/icon/money.png</iconset>
@@ -557,7 +569,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="6" column="0">
-           <widget class="QLabel" name="label_17">
+           <widget class="QLabel" name="labelMoney">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -573,10 +585,13 @@
             <property name="text">
              <string>المبلغ المدفوع</string>
             </property>
+            <property name="buddy">
+             <cstring>doubleSpinBoxMony</cstring>
+            </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_16">
+           <widget class="QLabel" name="labelMoneyDate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -592,10 +607,13 @@
             <property name="text">
              <string>تاريخ العملية</string>
             </property>
+            <property name="buddy">
+             <cstring>dateEditMoneyDate</cstring>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_3">
+           <widget class="QComboBox" name="comboBoxMoneyRenter">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -661,17 +679,29 @@
            </widget>
           </item>
           <item row="13" column="1">
-           <widget class="QTextEdit" name="textEdit_2">
+           <widget class="QTextEdit" name="textEditMoneyNotes">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="layoutDirection">
+             <enum>Qt::RightToLeft</enum>
+            </property>
+            <property name="documentTitle">
+             <string/>
+            </property>
+            <property name="lineWrapMode">
+             <enum>QTextEdit::WidgetWidth</enum>
+            </property>
+            <property name="placeholderText">
+             <string/>
+            </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QDoubleSpinBox" name="doubleSpinBox">
+           <widget class="QDoubleSpinBox" name="doubleSpinBoxMony">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -717,7 +747,7 @@
            </widget>
           </item>
           <item row="12" column="1">
-           <widget class="QComboBox" name="comboBox_5">
+           <widget class="QComboBox" name="comboBoxMonyMonth">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -807,7 +837,7 @@
            </widget>
           </item>
           <item row="12" column="0">
-           <widget class="QLabel" name="label_19">
+           <widget class="QLabel" name="labelMoneyMonth">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -823,10 +853,13 @@
             <property name="text">
              <string>مدفوعة عن شهر</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxMonyMonth</cstring>
+            </property>
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_15">
+           <widget class="QLabel" name="labelMoneyRenterName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -842,10 +875,13 @@
             <property name="text">
              <string>اسم المستأجر</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxMoneyRenter</cstring>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_14">
+           <widget class="QLabel" name="labelMoneyEstate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -861,13 +897,16 @@
             <property name="text">
              <string>العقار</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxMoneyEstate_2</cstring>
+            </property>
            </widget>
           </item>
           <item row="8" column="0" colspan="2">
            <widget class="QWidget" name="widget_7" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="QRadioButton" name="radioButton_2">
+              <widget class="QRadioButton" name="RadioDeposite">
                <property name="text">
                 <string>ايداع</string>
                </property>
@@ -877,7 +916,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QRadioButton" name="radioButton">
+              <widget class="QRadioButton" name="radioWithdraw">
                <property name="text">
                 <string>سحب</string>
                </property>
@@ -900,7 +939,7 @@
            </widget>
           </item>
           <item row="11" column="1">
-           <widget class="QComboBox" name="comboBox_4">
+           <widget class="QComboBox" name="comboBoxMoneyType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -962,7 +1001,7 @@
            </spacer>
           </item>
           <item row="11" column="0">
-           <widget class="QLabel" name="label_18">
+           <widget class="QLabel" name="labelMoneyType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -978,10 +1017,13 @@
             <property name="text">
              <string>نوع المعاملة</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxMoneyType</cstring>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="comboBox_6">
+           <widget class="QComboBox" name="comboBoxMoneyEstate_2">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1012,7 +1054,7 @@
            </widget>
           </item>
           <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="checkBox_2">
+           <widget class="QCheckBox" name="checkBoxAddFreeMoney">
             <property name="minimumSize">
              <size>
               <width>0</width>
@@ -1025,7 +1067,7 @@
            </widget>
           </item>
           <item row="13" column="0">
-           <widget class="QLabel" name="label_23">
+           <widget class="QLabel" name="labelMoneyLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1041,10 +1083,13 @@
             <property name="text">
              <string>تفاصيل اخرى</string>
             </property>
+            <property name="buddy">
+             <cstring>textEditMoneyNotes</cstring>
+            </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QDateEdit" name="dateEdit_3">
+           <widget class="QDateEdit" name="dateEditMoneyDate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1082,7 +1127,7 @@
               </spacer>
              </item>
              <item row="1" column="2">
-              <widget class="QPushButton" name="pushButton_7">
+              <widget class="QPushButton" name="buttonMoneyEmpty">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1095,7 +1140,7 @@
               </widget>
              </item>
              <item row="1" column="0">
-              <widget class="QPushButton" name="pushButton_6">
+              <widget class="QPushButton" name="buttonMoneySave">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1115,7 +1160,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_3">
+        <widget class="QWidget" name="tabRenters">
          <attribute name="icon">
           <iconset resource="resourse.qrc">
            <normaloff>:/icon/icon/user.png</normaloff>:/icon/icon/user.png</iconset>
@@ -1125,7 +1170,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0">
-           <widget class="QLabel" name="label_12">
+           <widget class="QLabel" name="labeRenterEstate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1141,10 +1186,13 @@
             <property name="text">
              <string>العقار</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxRenterEstate</cstring>
+            </property>
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_6">
+           <widget class="QLabel" name="labelRenterName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1160,10 +1208,13 @@
             <property name="text">
              <string>اسم المستأجر</string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditRenterName</cstring>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="comboBox_9">
+           <widget class="QComboBox" name="comboBoxApartmentType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1189,7 +1240,7 @@
            </widget>
           </item>
           <item row="8" column="0">
-           <widget class="QLabel" name="label_11">
+           <widget class="QLabel" name="labelContractType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1205,10 +1256,13 @@
             <property name="text">
              <string>نوع العقد</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxContractType</cstring>
+            </property>
            </widget>
           </item>
           <item row="6" column="1">
-           <widget class="QDateEdit" name="dateEdit">
+           <widget class="QDateEdit" name="dateEditContract">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1230,7 +1284,7 @@
            </widget>
           </item>
           <item row="8" column="1">
-           <widget class="QComboBox" name="comboBox">
+           <widget class="QComboBox" name="comboBoxContractType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1256,7 +1310,7 @@
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_8">
+           <widget class="QLabel" name="labelRenterPhone">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1272,10 +1326,13 @@
             <property name="text">
              <string>تليفون</string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditRenterPhone</cstring>
+            </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QLineEdit" name="lineEdit_5">
+           <widget class="QLineEdit" name="lineEditRenterPhone">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1291,7 +1348,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_22">
+           <widget class="QLabel" name="labeAprtmentType">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1307,10 +1364,13 @@
             <property name="text">
              <string>نوع العين المؤجرة</string>
             </property>
+            <property name="buddy">
+             <cstring>comboBoxApartmentType</cstring>
+            </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QLineEdit" name="lineEdit_4">
+           <widget class="QLineEdit" name="lineEditRenterNationalId">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1329,7 +1389,7 @@
            <widget class="QWidget" name="widget_2" native="true">
             <layout class="QGridLayout" name="gridLayout_8">
              <item row="0" column="2">
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="buttonRenterEmpty">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1342,7 +1402,7 @@
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton_4">
+              <widget class="QPushButton" name="buttonRenterSave">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1374,7 +1434,7 @@
            </widget>
           </item>
           <item row="6" column="0">
-           <widget class="QLabel" name="label_9">
+           <widget class="QLabel" name="labelContractDate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1390,10 +1450,13 @@
             <property name="text">
              <string>تاريخ العقد</string>
             </property>
+            <property name="buddy">
+             <cstring>dateEditContract</cstring>
+            </property>
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
+           <widget class="QLabel" name="labelRenterNationalID">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1409,10 +1472,13 @@
             <property name="text">
              <string>الرقم القومى</string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditRenterNationalId</cstring>
+            </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QLineEdit" name="lineEdit_3">
+           <widget class="QLineEdit" name="lineEditRenterName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1428,7 +1494,7 @@
            </widget>
           </item>
           <item row="7" column="0">
-           <widget class="QLabel" name="label_10">
+           <widget class="QLabel" name="labelContractEndDate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1444,10 +1510,13 @@
             <property name="text">
              <string>تاريخ انتهاء العقد</string>
             </property>
+            <property name="buddy">
+             <cstring>dateEditContractEnd</cstring>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="comboBox_2">
+           <widget class="QComboBox" name="comboBoxRenterEstate">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1478,7 +1547,7 @@
            </widget>
           </item>
           <item row="7" column="1">
-           <widget class="QDateEdit" name="dateEdit_2">
+           <widget class="QDateEdit" name="dateEditContractEnd">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1500,7 +1569,7 @@
            </widget>
           </item>
           <item row="1" column="0">
-           <widget class="QLabel" name="label_29">
+           <widget class="QLabel" name="labelApartmentNumber">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1516,10 +1585,13 @@
             <property name="text">
              <string>رقم الشقة</string>
             </property>
+            <property name="buddy">
+             <cstring>spinBoxRenterApartmentNumber</cstring>
+            </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="spinBox_3">
+           <widget class="QSpinBox" name="spinBoxRenterApartmentNumber">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1542,7 +1614,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_4">
+        <widget class="QWidget" name="tabEstates">
          <attribute name="icon">
           <iconset resource="resourse.qrc">
            <normaloff>:/icon/icon/estate.png</normaloff>:/icon/icon/estate.png</iconset>
@@ -1552,7 +1624,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
-           <widget class="QLabel" name="label">
+           <widget class="QLabel" name="labelOwnerName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1568,10 +1640,13 @@
             <property name="text">
              <string>اسم المالك</string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditOwnerName</cstring>
+            </property>
            </widget>
           </item>
           <item row="5" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="labelEstateNotes">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1587,10 +1662,13 @@
             <property name="text">
              <string>تفاصيل اخرى</string>
             </property>
+            <property name="buddy">
+             <cstring>textEditEstatesNotes</cstring>
+            </property>
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="QTextEdit" name="textEdit">
+           <widget class="QTextEdit" name="textEditEstatesNotes">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
               <horstretch>0</horstretch>
@@ -1600,7 +1678,7 @@
            </widget>
           </item>
           <item row="3" column="0">
-           <widget class="QLabel" name="label_3">
+           <widget class="QLabel" name="labelFloors">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1616,13 +1694,16 @@
             <property name="text">
              <string>عدد الطوابق</string>
             </property>
+            <property name="buddy">
+             <cstring>spinBoxFloors</cstring>
+            </property>
            </widget>
           </item>
           <item row="6" column="0" colspan="2">
            <widget class="QWidget" name="widget" native="true">
             <layout class="QGridLayout" name="gridLayout_5">
              <item row="0" column="2">
-              <widget class="QPushButton" name="pushButton_3">
+              <widget class="QPushButton" name="buttonEstateEmpty">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1635,7 +1716,7 @@
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="buttonEstateSave">
                <property name="minimumSize">
                 <size>
                  <width>40</width>
@@ -1667,7 +1748,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="label_4">
+           <widget class="QLabel" name="labelApartments">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1683,10 +1764,13 @@
             <property name="text">
              <string>عدد الشقق</string>
             </property>
+            <property name="buddy">
+             <cstring>spinBoxAppartments</cstring>
+            </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QLineEdit" name="lineEdit_2">
+           <widget class="QLineEdit" name="lineEditEstateAddress">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1702,7 +1786,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QLineEdit" name="lineEdit">
+           <widget class="QLineEdit" name="lineEditOwnerName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1718,7 +1802,7 @@
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QSpinBox" name="spinBox_2">
+           <widget class="QSpinBox" name="spinBoxAppartments">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1743,7 +1827,7 @@
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QSpinBox" name="spinBox">
+           <widget class="QSpinBox" name="spinBoxFloors">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1768,7 +1852,7 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QLabel" name="label_2">
+           <widget class="QLabel" name="labelEstateAddress">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1784,10 +1868,13 @@
             <property name="text">
              <string>عنوان العقار</string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditEstateAddress</cstring>
+            </property>
            </widget>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_13">
+           <widget class="QLabel" name="labelEstateName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
               <horstretch>0</horstretch>
@@ -1803,10 +1890,13 @@
             <property name="text">
              <string>اسم رمزى للعقار </string>
             </property>
+            <property name="buddy">
+             <cstring>lineEditEstateName</cstring>
+            </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QLineEdit" name="lineEdit_6">
+           <widget class="QLineEdit" name="lineEditEstateName">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
               <horstretch>0</horstretch>
@@ -1823,7 +1913,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="tab_5">
+        <widget class="QWidget" name="tabReceipt">
          <attribute name="icon">
           <iconset resource="resourse.qrc">
            <normaloff>:/icon/icon/resit.png</normaloff>:/icon/icon/resit.png</iconset>
@@ -1833,7 +1923,7 @@
          </attribute>
          <layout class="QGridLayout" name="gridLayout_14">
           <item row="1" column="1">
-           <widget class="QPushButton" name="pushButton_9">
+           <widget class="QPushButton" name="buttonPrint">
             <property name="minimumSize">
              <size>
               <width>150</width>
@@ -1877,8 +1967,155 @@
           <item row="0" column="0" colspan="3">
            <widget class="QWidget" name="widget_6" native="true">
             <layout class="QGridLayout" name="gridLayout_13">
+             <item row="1" column="1">
+              <widget class="QComboBox" name="comboBoxRenter">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="editable">
+                <bool>false</bool>
+               </property>
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>مستأجر 1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 3</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 4</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 5</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 6</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 7</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 8</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 9</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>مستأجر 10</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QComboBox" name="comboBoxEstate">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>30</height>
+                </size>
+               </property>
+               <property name="layoutDirection">
+                <enum>Qt::RightToLeft</enum>
+               </property>
+               <property name="editable">
+                <bool>false</bool>
+               </property>
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <item>
+                <property name="text">
+                 <string>عقار 1</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>عقار 2</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>عقار 3</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="labelRenter">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>100</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="text">
+                <string>اسم المستأجر</string>
+               </property>
+               <property name="buddy">
+                <cstring>comboBoxRenter</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="labelMonth">
+               <property name="text">
+                <string>عن شهر</string>
+               </property>
+               <property name="buddy">
+                <cstring>comboBoxMonth</cstring>
+               </property>
+              </widget>
+             </item>
              <item row="2" column="1">
-              <widget class="QComboBox" name="comboBox_13">
+              <widget class="QComboBox" name="comboBoxMonth">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -1957,7 +2194,7 @@
               </widget>
              </item>
              <item row="0" column="0">
-              <widget class="QLabel" name="label_24">
+              <widget class="QLabel" name="labelEstate">
                <property name="sizePolicy">
                 <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
                  <horstretch>0</horstretch>
@@ -1973,148 +2210,26 @@
                <property name="text">
                 <string>العقار</string>
                </property>
+               <property name="buddy">
+                <cstring>comboBoxEstate</cstring>
+               </property>
               </widget>
              </item>
-             <item row="0" column="1">
-              <widget class="QComboBox" name="comboBox_11">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+             <item row="3" column="0" colspan="2">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="minimumSize">
+               <property name="sizeType">
+                <enum>QSizePolicy::Maximum</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
                 <size>
-                 <width>0</width>
-                 <height>30</height>
+                 <width>20</width>
+                 <height>100</height>
                 </size>
                </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="editable">
-                <bool>false</bool>
-               </property>
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string>عقار 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>عقار 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>عقار 3</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="label_25">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>اسم المستأجر</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QComboBox" name="comboBox_12">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="minimumSize">
-                <size>
-                 <width>0</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="layoutDirection">
-                <enum>Qt::RightToLeft</enum>
-               </property>
-               <property name="editable">
-                <bool>false</bool>
-               </property>
-               <property name="currentIndex">
-                <number>0</number>
-               </property>
-               <item>
-                <property name="text">
-                 <string>مستأجر 1</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 2</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 3</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 4</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 5</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 6</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 7</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 8</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 9</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>مستأجر 10</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="label_26">
-               <property name="text">
-                <string>عن شهر</string>
-               </property>
-              </widget>
+              </spacer>
              </item>
             </layout>
            </widget>
@@ -2140,29 +2255,99 @@
     <property name="title">
      <string>ملف</string>
     </property>
+    <widget class="QMenu" name="menuFile">
+     <property name="title">
+      <string>قاعدة بيانات</string>
+     </property>
+     <addaction name="menuExport"/>
+     <addaction name="menuImport"/>
+    </widget>
+    <addaction name="menuFile"/>
+    <addaction name="menuExit"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menuAbout">
     <property name="title">
      <string>عن البرنامج</string>
     </property>
-    <addaction name="action"/>
-    <addaction name="actionAbout_Qt"/>
+    <addaction name="menuAboutApp"/>
+    <addaction name="menuAboutQt"/>
    </widget>
    <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="action">
+  <action name="menuAboutApp">
    <property name="text">
     <string>عن البرنامج</string>
    </property>
   </action>
-  <action name="actionAbout_Qt">
+  <action name="menuAboutQt">
    <property name="text">
     <string>About Qt</string>
    </property>
   </action>
+  <action name="menuExit">
+   <property name="text">
+    <string>خروج</string>
+   </property>
+  </action>
+  <action name="menuExport">
+   <property name="text">
+    <string>تصدير</string>
+   </property>
+  </action>
+  <action name="menuImport">
+   <property name="text">
+    <string>استيراد</string>
+   </property>
+  </action>
  </widget>
+ <tabstops>
+  <tabstop>tabWidgetMain</tabstop>
+  <tabstop>comboBoxQueryEstate</tabstop>
+  <tabstop>comboBoxQueryReport</tabstop>
+  <tabstop>dateEditQueryDateFrom</tabstop>
+  <tabstop>dateEditQueryDateTo</tabstop>
+  <tabstop>checkBoxQueryRenter</tabstop>
+  <tabstop>comboBoxQueryRenter</tabstop>
+  <tabstop>buttonQuery</tabstop>
+  <tabstop>buttonExit</tabstop>
+  <tabstop>checkBoxAddFreeMoney</tabstop>
+  <tabstop>comboBoxMoneyEstate_2</tabstop>
+  <tabstop>comboBoxMoneyRenter</tabstop>
+  <tabstop>dateEditMoneyDate</tabstop>
+  <tabstop>doubleSpinBoxMony</tabstop>
+  <tabstop>RadioDeposite</tabstop>
+  <tabstop>radioWithdraw</tabstop>
+  <tabstop>comboBoxMoneyType</tabstop>
+  <tabstop>comboBoxMonyMonth</tabstop>
+  <tabstop>textEditMoneyNotes</tabstop>
+  <tabstop>buttonMoneySave</tabstop>
+  <tabstop>buttonMoneyEmpty</tabstop>
+  <tabstop>comboBoxRenterEstate</tabstop>
+  <tabstop>spinBoxRenterApartmentNumber</tabstop>
+  <tabstop>comboBoxApartmentType</tabstop>
+  <tabstop>lineEditRenterName</tabstop>
+  <tabstop>lineEditRenterNationalId</tabstop>
+  <tabstop>lineEditRenterPhone</tabstop>
+  <tabstop>dateEditContract</tabstop>
+  <tabstop>dateEditContractEnd</tabstop>
+  <tabstop>comboBoxContractType</tabstop>
+  <tabstop>buttonRenterSave</tabstop>
+  <tabstop>buttonRenterEmpty</tabstop>
+  <tabstop>lineEditEstateName</tabstop>
+  <tabstop>lineEditOwnerName</tabstop>
+  <tabstop>lineEditEstateAddress</tabstop>
+  <tabstop>spinBoxFloors</tabstop>
+  <tabstop>spinBoxAppartments</tabstop>
+  <tabstop>textEditEstatesNotes</tabstop>
+  <tabstop>buttonEstateSave</tabstop>
+  <tabstop>buttonEstateEmpty</tabstop>
+  <tabstop>comboBoxEstate</tabstop>
+  <tabstop>comboBoxRenter</tabstop>
+  <tabstop>comboBoxMonth</tabstop>
+  <tabstop>buttonPrint</tabstop>
+ </tabstops>
  <resources>
   <include location="resourse.qrc"/>
  </resources>
