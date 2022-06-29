@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     this->setWindowIcon(QIcon(":/icon/icon/app_icon.ico"));
     defaultSetupUI();
 }
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -18,8 +19,17 @@ MainWindow::~MainWindow()
 
 /************* General ***************/
 void MainWindow::defaultSetupUI(){
+    setCurrentDateUI();
     defaultQueryTabUI();
     defaultMoneyTabUI();
+}
+
+void MainWindow::setCurrentDateUI(){
+    ui->dateEditContract->setDate(QDate::currentDate());
+    ui->dateEditContractEnd->setDate(QDate::currentDate());
+    ui->dateEditMoneyDate->setDate(QDate::currentDate());
+    ui->dateEditQueryDateFrom->setDate(QDate::currentDate());
+    ui->dateEditQueryDateTo->setDate(QDate::currentDate());
 }
 /*************************************/
 
@@ -30,8 +40,8 @@ void MainWindow::defaultQueryTabUI(){
     actionReportTypeChanges();
 }
 
-
-void MainWindow::setQueryTabFieldsStatus(bool state){
+void MainWindow::setQueryTabFieldsStatus(bool state)
+{
     //enable or disable all field in 'Query Tab'
     ui->comboBoxQueryEstate->setDisabled(state);
     ui->comboBoxQueryReport->setDisabled(state);
@@ -41,10 +51,11 @@ void MainWindow::setQueryTabFieldsStatus(bool state){
     ui->checkBoxQueryRenter->setChecked(state);
     ui->comboBoxQueryRenter->setDisabled(state);
     ui->buttonQuery->setDisabled(state);
-};
+}
 
 //*** Actions for Query Tab ***
-void MainWindow::actionReportTypeChanges(){
+void MainWindow::actionReportTypeChanges()
+{
     //change field allow depend on 'comboBoxQueryReport'selection
 
     switch (ui->comboBoxQueryReport->currentIndex()){
@@ -98,14 +109,15 @@ void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
 }
 /***********************************************/
 
-/*###############################################################################*/
 /************* Money Tab Section ***************/
-void MainWindow::defaultMoneyTabUI(){
+void MainWindow::defaultMoneyTabUI()
+{
     //default UI form for 'Money Tab'
     setMoneyTabFieldsStatus(false);
 }
 
-void MainWindow::setMoneyTabFieldsStatus(bool state){
+void MainWindow::setMoneyTabFieldsStatus(bool state)
+{
     //enable or disable all field in 'Money Tab'
     ui->comboBoxMoneyEstate->setDisabled(state);
     ui->comboBoxMoneyRenter->setDisabled(state);
@@ -119,8 +131,9 @@ void MainWindow::setMoneyTabFieldsStatus(bool state){
 
 }
 
-//*** Actions for Query Tab ***
-void MainWindow::actionAddFreeMoneyChanges(){
+//*** Actions for Mony Tab ***
+void MainWindow::actioncheckBoxAddFreeMoney()
+{
     if (ui->checkBoxAddFreeMoney->isChecked()){
         setMoneyTabFieldsStatus(true);
         ui->comboBoxMoneyEstate->setDisabled(false);
@@ -133,20 +146,68 @@ void MainWindow::actionAddFreeMoneyChanges(){
         setMoneyTabFieldsStatus(false);
     }
 }
-//*** SIGNAL AND SLOT for Query Tab***
+void MainWindow::actionButtonMoneyEmpty(){
+    ui->dateEditMoneyDate->setDate(QDate::currentDate());
+    ui->doubleSpinBoxMony->setValue(0);
+    ui->RadioDeposite->setChecked(true);
+    ui->comboBoxMoneyType->setCurrentIndex(0);
+    ui->comboBoxMonyMonth->setCurrentIndex(0);
+    ui->textEditMoneyNotes->clear();
+}
+
+//*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 {
-    actionAddFreeMoneyChanges();
+    actioncheckBoxAddFreeMoney();
+}
+
+void MainWindow::on_buttonMoneyEmpty_clicked()
+{
+    actionButtonMoneyEmpty();
 }
 /***********************************************/
 
 /************* Renter Tab Section ***************/
+
+//*** Actions for Renter Tab ***
+void MainWindow::actionButtonRenterEmpty()
+{
+    ui->spinBoxRenterApartmentNumber->setValue(0);
+    ui->comboBoxApartmentType->setCurrentIndex(0);
+    ui->lineEditRenterName->clear();
+    ui->lineEditRenterNationalId->clear();
+    ui->lineEditRenterPhone->clear();
+    ui->dateEditContract->setDate(QDate::currentDate());
+    ui->dateEditContractEnd->setDate(QDate::currentDate());
+    ui->comboBoxContractType->setCurrentIndex(0);
+}
+
+//*** SIGNAL AND SLOT for Renter Tab***
+void MainWindow::on_buttonRenterEmpty_clicked()
+{
+    actionButtonRenterEmpty();
+}
 /************************************************/
 
-/************* Money Tab Section ***************/
-/***********************************************/
-
 /************* Estate Tab Section ***************/
+
+//*** Actions for Renter Tab ***
+void MainWindow::actionButtonEstateEmpty ()//######################################### AAAA
+{
+    ui->lineEditEstateName->clear();
+    ui->lineEditOwnerName->clear();
+    ui->lineEditEstateAddress->clear();
+    ui->spinBoxFloors->setValue(0);
+    ui->spinBoxAppartments->setValue(0);
+    ui->textEditEstatesNotes->clear();
+}
+
+//*** SIGNAL AND SLOT for Estate Tab***
+void MainWindow::on_buttonEstateEmpty_clicked()
+{
+    actionButtonEstateEmpty();
+}
+
 /************************************************/
 
 /************* Recipet Tab Section ***************/
@@ -155,6 +216,13 @@ void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 
 /*###############################################*/
 /*###############################################*/
+
+
+
+
+
+
+
 
 
 

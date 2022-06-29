@@ -16,6 +16,7 @@ public:
     ~MainWindow();
     /************* General ***************/
     void defaultSetupUI();
+    void setCurrentDateUI();
     /*************************************/
 
     /************* Query Tab Section ***************/
@@ -29,16 +30,20 @@ public:
     void defaultMoneyTabUI();
     void setMoneyTabFieldsStatus(bool state);
     //Actions
-    void actionAddFreeMoneyChanges();
+    void actioncheckBoxAddFreeMoney();
+    void actionButtonMoneyEmpty();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
+
+    //*** Actions
+    void actionButtonRenterEmpty();
     /************************************************/
 
-    /************* Money Tab Section ***************/
-    /***********************************************/
-
     /************* Estate Tab Section ***************/
+
+    //*** Actions
+    void actionButtonEstateEmpty ();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
@@ -52,6 +57,12 @@ private slots:
 
     //*** SIGNAL AND SLOT for Money Tab ***
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
+    void on_buttonMoneyEmpty_clicked();
+
+    //*** SIGNAL AND SLOT for Renter Tab***
+    void on_buttonRenterEmpty_clicked();
+
+    void on_buttonEstateEmpty_clicked();
 
 private:
     Ui::MainWindow *ui;
