@@ -29,28 +29,30 @@ public:
     void defaultQueryTabUI();
     void setQueryTabFieldsStatus(bool state);
     //Actions
-    void actionReportTypeChanges();
+    void actionQueryReportChanges();
     /***********************************************/
 
     /************* Money Tab Section ***************/
     void defaultMoneyTabUI();
     void setMoneyTabFieldsStatus(bool state);
     //Actions
-    void actioncheckBoxAddFreeMoney();
+    void actionCheckBoxAddFreeMoney();
     void actionButtonMoneyEmpty();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
-
+    bool compareContractDates();
+    QList<QString> getDateRenter();
     //*** Actions
     void actionButtonRenterEmpty();
+    void actionValidationRenter();
     /************************************************/
 
     /************* Estate Tab Section ***************/
-
+    QList<QString> getDataEstate();
     //*** Actions
     void actionButtonEstateEmpty ();
-    QList<QString> getDataEstate();
+    void actionValidationEstate();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
@@ -78,6 +80,8 @@ private slots:
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
+
+    void on_buttonRenterSave_clicked();
 
 private:
     Ui::MainWindow *ui;

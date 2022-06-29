@@ -7,7 +7,6 @@
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/test.db";
-
 /**********/
 
 MainWindow::MainWindow(QWidget *parent)
@@ -23,6 +22,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
+
 /************* General ***************/
 void MainWindow::defaultSetupUI(){
     setCurrentDateUI();
@@ -42,6 +42,7 @@ void MainWindow::setCurrentDateUI(){
 /*************************************/
 
 /************* MainWindow Section ***************/
+
 //*** Actions for MainWindow Tab ***
 void MainWindow::actionbuttonExit(){
     QMessageBox confirm(this);
@@ -73,7 +74,7 @@ void MainWindow::on_buttonExit_clicked()
 void MainWindow::defaultQueryTabUI(){
     //default UI form for 'Query Tab'
     ui->comboBoxQueryReport->setCurrentIndex(3);
-    actionReportTypeChanges();
+    actionQueryReportChanges();
 }
 
 void MainWindow::setQueryTabFieldsStatus(bool state)
@@ -90,7 +91,7 @@ void MainWindow::setQueryTabFieldsStatus(bool state)
 }
 
 //*** Actions for Query Tab ***
-void MainWindow::actionReportTypeChanges()
+void MainWindow::actionQueryReportChanges()
 {
     //change field allow depend on 'comboBoxQueryReport'selection
 
@@ -132,7 +133,7 @@ void MainWindow::actionReportTypeChanges()
 //*** SIGNAL AND SLOT for Query Tab ***
 void MainWindow::on_comboBoxQueryReport_currentIndexChanged(int index)
 {
-    actionReportTypeChanges();
+    actionQueryReportChanges();
 }
 
 void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
@@ -164,11 +165,10 @@ void MainWindow::setMoneyTabFieldsStatus(bool state)
     ui->comboBoxMoneyType->setDisabled(state);
     ui->comboBoxMonyMonth->setDisabled(state);
     ui->textEditMoneyNotes->setDisabled(state);
-
 }
 
 //*** Actions for Mony Tab ***
-void MainWindow::actioncheckBoxAddFreeMoney()
+void MainWindow::actionCheckBoxAddFreeMoney()
 {
     if (ui->checkBoxAddFreeMoney->isChecked()){
         setMoneyTabFieldsStatus(true);
@@ -194,7 +194,7 @@ void MainWindow::actionButtonMoneyEmpty(){
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 {
-    actioncheckBoxAddFreeMoney();
+    actionCheckBoxAddFreeMoney();
 }
 
 void MainWindow::on_buttonMoneyEmpty_clicked()
@@ -203,7 +203,31 @@ void MainWindow::on_buttonMoneyEmpty_clicked()
 }
 /***********************************************/
 
-/************* Renter Tab Section ***************/
+/************* Renter Tab Section ***************/  //######################################### AAAA
+bool MainWindow::compareContractDates()
+{
+    QDate contractDate = ui->dateEditContract->date();
+    QDate contractDateEnd = ui->dateEditContractEnd->date();
+    if (contractDate <= contractDateEnd){
+        return false;
+    }
+    return true;
+}
+
+QList<QString> MainWindow::getDateRenter()
+{
+    QList<QString> data;
+    data.push_back(ui->comboBoxRenterEstate->currentText());
+    data.push_back(QString::number(ui->spinBoxRenterApartmentNumber->value()));
+    data.push_back(ui->comboBoxApartmentType->currentText());
+    data.push_back(ui->lineEditRenterName->text().simplified());
+    data.push_back(ui->lineEditRenterNationalId->text().simplified());
+    data.push_back(ui->lineEditRenterPhone->text().simplified());
+    data.push_back(ui->dateEditContract->date().toString());
+    data.push_back(ui->dateEditContractEnd->date().toString());
+    data.push_back(ui->comboBoxContractType->currentText());
+    return data;
+}
 
 //*** Actions for Renter Tab ***
 void MainWindow::actionButtonRenterEmpty()
@@ -217,27 +241,30 @@ void MainWindow::actionButtonRenterEmpty()
     ui->dateEditContractEnd->setDate(QDate::currentDate());
     ui->comboBoxContractType->setCurrentIndex(0);
 }
+ void MainWindow::actionValidationRenter()
+ {
+     validation valid;
+     QString message = valid.renterValidation(getDateRenter());
+     if (compareContractDates()){
+         message+="تاريخ التعاقد يجب ان يسبق تاريخ الانتهاء\n";
+     }
+     if (!message.isEmpty()){
+         QMessageBox::warning(this,"",message);
+     }
+ }
 
 //*** SIGNAL AND SLOT for Renter Tab***
 void MainWindow::on_buttonRenterEmpty_clicked()
 {
     actionButtonRenterEmpty();
 }
+void MainWindow::on_buttonRenterSave_clicked()
+{
+    actionValidationRenter();
+}
 /************************************************/
 
 /************* Estate Tab Section ***************/
-
-//*** Actions for Renter Tab ***
-void MainWindow::actionButtonEstateEmpty ()
-{
-    ui->lineEditEstateName->clear();
-    ui->lineEditOwnerName->clear();
-    ui->lineEditEstateAddress->clear();
-    ui->spinBoxFloors->setValue(0);
-    ui->spinBoxAppartments->setValue(0);
-    ui->textEditEstatesNotes->clear();
-}
-
 QList<QString> MainWindow::getDataEstate()
 {
     QList<QString> data;
@@ -250,12 +277,36 @@ QList<QString> MainWindow::getDataEstate()
     return data;
 }
 
+//*** Actions for Esate Tab ***
+void MainWindow::actionButtonEstateEmpty ()
+{
+    ui->lineEditEstateName->clear();
+    ui->lineEditOwnerName->clear();
+    ui->lineEditEstateAddress->clear();
+    ui->spinBoxFloors->setValue(0);
+    ui->spinBoxAppartments->setValue(0);
+    ui->textEditEstatesNotes->clear();
+}
+
+void MainWindow::actionValidationEstate()
+{
+    validation valid ;
+    QString message = valid.estatesValidation(getDataEstate());
+    if (!message.isEmpty()){
+      QMessageBox::warning(this,"",message);
+    }
+}
+
 //*** SIGNAL AND SLOT for Estate Tab***
 void MainWindow::on_buttonEstateEmpty_clicked()
 {
     actionButtonEstateEmpty();
 }
 
+void MainWindow::on_buttonEstateSave_clicked()
+{
+    actionValidationEstate();
+}
 /************************************************/
 
 /************* Recipet Tab Section ***************/
@@ -268,19 +319,10 @@ void MainWindow::on_buttonEstateEmpty_clicked()
 
 /**** TESTING *****/
 
-void MainWindow::on_buttonQuery_clicked() //######################################### AAAA
+void MainWindow::on_buttonQuery_clicked()
 {
 
 }
 
 
-void MainWindow::on_buttonEstateSave_clicked()
-{
-  validation valid ;
-  QString message = valid.estatesValidation(getDataEstate());
-  if (!message.isEmpty()){
-    QMessageBox::warning(this,"",message);
-  }
-
-}
 
