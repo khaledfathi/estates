@@ -3,6 +3,8 @@
 #include <QMessageBox>
 
 
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -32,6 +34,34 @@ void MainWindow::setCurrentDateUI(){
     ui->dateEditQueryDateTo->setDate(QDate::currentDate());
 }
 /*************************************/
+
+/************* MainWindow Section ***************///######################################### AAAA
+//*** Actions for MainWindow Tab ***
+void MainWindow::actionbuttonExit(){
+    QMessageBox confirm(this);
+    confirm.setWindowTitle("خروج");
+    confirm.setText("تأكيد الخروج");
+    confirm.setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+    confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    confirm.setDefaultButton(QMessageBox::No);
+    confirm.button(QMessageBox::Yes)->setText("موافق");
+    confirm.button(QMessageBox::No)->setText("الغاء");
+    if (confirm.exec() == QMessageBox::Yes){
+        this->close();
+    }
+}
+//*** SIGNAL AND SLOT for MainWindow Tab ***
+void MainWindow::on_menuExit_triggered()
+{
+    actionbuttonExit();
+}
+
+void MainWindow::on_buttonExit_clicked()
+{
+    actionbuttonExit();
+}
+
+/************************************************/
 
 /************* Query Tab Section ***************/
 void MainWindow::defaultQueryTabUI(){
@@ -192,7 +222,7 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 /************* Estate Tab Section ***************/
 
 //*** Actions for Renter Tab ***
-void MainWindow::actionButtonEstateEmpty ()//######################################### AAAA
+void MainWindow::actionButtonEstateEmpty ()
 {
     ui->lineEditEstateName->clear();
     ui->lineEditOwnerName->clear();
@@ -216,6 +246,10 @@ void MainWindow::on_buttonEstateEmpty_clicked()
 
 /*###############################################*/
 /*###############################################*/
+
+
+
+
 
 
 
