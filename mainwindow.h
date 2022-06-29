@@ -50,6 +50,7 @@ public:
 
     //*** Actions
     void actionButtonEstateEmpty ();
+    QList<QString> getDataEstate();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
@@ -57,9 +58,14 @@ public:
 
 
 private slots:
+    //*** SIGNAL AND SLOT MainWindow General***
+    void on_buttonExit_clicked();
+    void on_menuExit_triggered();
+
     //*** SIGNAL AND SLOT for Query Tab ***
     void on_comboBoxQueryReport_currentIndexChanged(int index);
     void on_checkBoxQueryRenter_stateChanged(int arg1);
+    void on_buttonQuery_clicked();
 
     //*** SIGNAL AND SLOT for Money Tab ***
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
@@ -69,9 +75,9 @@ private slots:
     void on_buttonRenterEmpty_clicked();
     void on_buttonEstateEmpty_clicked();
 
-    void on_buttonExit_clicked();
 
-    void on_menuExit_triggered();
+    //*** SIGNAL AND SLOT for Estates Tab***
+    void on_buttonEstateSave_clicked();
 
 private:
     Ui::MainWindow *ui;

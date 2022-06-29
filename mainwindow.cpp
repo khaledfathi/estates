@@ -1,9 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include "database.h"
+#include <QDir>
+#include "validation.h"
 
+/**Global**/
+QString databaseFilePath = QDir::currentPath()+"/test.db";
 
-
+/**********/
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -18,7 +23,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
 /************* General ***************/
 void MainWindow::defaultSetupUI(){
     setCurrentDateUI();
@@ -32,10 +36,12 @@ void MainWindow::setCurrentDateUI(){
     ui->dateEditMoneyDate->setDate(QDate::currentDate());
     ui->dateEditQueryDateFrom->setDate(QDate::currentDate());
     ui->dateEditQueryDateTo->setDate(QDate::currentDate());
+    ui->spinBoxMoneyYear->setValue(QDate::currentDate().year());
+    ui->spinBoxReceiptYear->setValue(QDate::currentDate().year());
 }
 /*************************************/
 
-/************* MainWindow Section ***************///######################################### AAAA
+/************* MainWindow Section ***************/
 //*** Actions for MainWindow Tab ***
 void MainWindow::actionbuttonExit(){
     QMessageBox confirm(this);
@@ -232,6 +238,18 @@ void MainWindow::actionButtonEstateEmpty ()
     ui->textEditEstatesNotes->clear();
 }
 
+QList<QString> MainWindow::getDataEstate()
+{
+    QList<QString> data;
+    data.push_back(ui->lineEditEstateName->text().simplified());
+    data.push_back(ui->lineEditOwnerName->text().simplified());
+    data.push_back(ui->lineEditEstateAddress->text().simplified());
+    data.push_back(QString::number(ui->spinBoxFloors->value()).simplified());
+    data.push_back(QString::number(ui->spinBoxAppartments->value()).simplified());
+    data.push_back(ui->textEditEstatesNotes->toPlainText().simplified());
+    return data;
+}
+
 //*** SIGNAL AND SLOT for Estate Tab***
 void MainWindow::on_buttonEstateEmpty_clicked()
 {
@@ -248,16 +266,21 @@ void MainWindow::on_buttonEstateEmpty_clicked()
 /*###############################################*/
 
 
+/**** TESTING *****/
+
+void MainWindow::on_buttonQuery_clicked() //######################################### AAAA
+{
+
+}
 
 
+void MainWindow::on_buttonEstateSave_clicked()
+{
+  validation valid ;
+  QString message = valid.estatesValidation(getDataEstate());
+  if (!message.isEmpty()){
+    QMessageBox::warning(this,"",message);
+  }
 
-
-
-
-
-
-
-
-
-
+}
 
