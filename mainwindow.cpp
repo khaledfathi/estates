@@ -90,6 +90,11 @@ void MainWindow::setQueryTabFieldsStatus(bool state)
     ui->buttonQuery->setDisabled(state);
 }
 
+bool MainWindow::compareQueryDates() //#################################### AAAAA
+{
+    return !( ui->dateEditQueryDateFrom->date() <= ui->dateEditQueryDateTo->date());
+}
+
 //*** Actions for Query Tab ***
 void MainWindow::actionQueryReportChanges()
 {
@@ -129,6 +134,22 @@ void MainWindow::actionQueryReportChanges()
     break;
     }
 }
+void MainWindow::actionValidationQuery()
+{
+    if(ui->dateEditQueryDateFrom->isEnabled()|| ui->dateEditQueryDateTo->isEnabled()){
+        if(compareQueryDates()){
+            QMessageBox::warning(this,"","التاريخ الاقدم اولاً");
+        }
+    }
+}
+void MainWindow::actioncheckBoxQueryRenterChanged(int status)
+{
+    if (status){
+        ui->comboBoxQueryRenter->setDisabled(false);
+    }else{
+        ui->comboBoxQueryRenter->setDisabled(true);
+    }
+}
 
 //*** SIGNAL AND SLOT for Query Tab ***
 void MainWindow::on_comboBoxQueryReport_currentIndexChanged(int index)
@@ -138,11 +159,12 @@ void MainWindow::on_comboBoxQueryReport_currentIndexChanged(int index)
 
 void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
 {
-    if (arg1){
-        ui->comboBoxQueryRenter->setDisabled(false);
-    }else{
-        ui->comboBoxQueryRenter->setDisabled(true);
-    }
+    actioncheckBoxQueryRenterChanged(arg1);
+}
+
+void MainWindow::on_buttonQuery_clicked()
+{
+    actionValidationQuery();
 }
 /***********************************************/
 
@@ -165,6 +187,19 @@ void MainWindow::setMoneyTabFieldsStatus(bool state)
     ui->comboBoxMoneyType->setDisabled(state);
     ui->comboBoxMonyMonth->setDisabled(state);
     ui->textEditMoneyNotes->setDisabled(state);
+}
+QList<QString> MainWindow::getDataMoney()
+{
+    QList<QString> data;
+    data.push_back(ui->comboBoxMoneyEstate->currentText());
+    data.push_back(ui->comboBoxMoneyRenter->currentText());
+    data.push_back(ui->dateEditMoneyDate->date().toString());
+    data.push_back(QString::number(ui->doubleSpinBoxMony->value()));
+    data.push_back(ui->comboBoxMoneyType->currentText());
+    data.push_back(QString::number(ui->comboBoxMonyMonth->currentIndex()+1));
+    data.push_back(QString::number(ui->spinBoxMoneyYear->value()));
+    data.push_back(ui->textEditMoneyNotes->toPlainText());
+    return data;
 }
 
 //*** Actions for Mony Tab ***
@@ -191,6 +226,14 @@ void MainWindow::actionButtonMoneyEmpty(){
     ui->textEditMoneyNotes->clear();
 }
 
+void MainWindow::actionValidationMoney()
+{
+    validation valid ;
+    QString message = valid.moneyValidation(getDataMoney());
+    QMessageBox::warning(this,"",message);
+}
+
+
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 {
@@ -201,17 +244,17 @@ void MainWindow::on_buttonMoneyEmpty_clicked()
 {
     actionButtonMoneyEmpty();
 }
+
+void MainWindow::on_buttonMoneySave_clicked()
+{
+    actionValidationMoney();
+}
 /***********************************************/
 
-/************* Renter Tab Section ***************/  //######################################### AAAA
+/************* Renter Tab Section ***************/
 bool MainWindow::compareContractDates()
 {
-    QDate contractDate = ui->dateEditContract->date();
-    QDate contractDateEnd = ui->dateEditContractEnd->date();
-    if (contractDate <= contractDateEnd){
-        return false;
-    }
-    return true;
+    return !(ui->dateEditContract->date() < ui->dateEditContractEnd->date());
 }
 
 QList<QString> MainWindow::getDateRenter()
@@ -318,11 +361,4 @@ void MainWindow::on_buttonEstateSave_clicked()
 
 
 /**** TESTING *****/
-
-void MainWindow::on_buttonQuery_clicked()
-{
-
-}
-
-
 

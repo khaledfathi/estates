@@ -28,16 +28,21 @@ public:
     /************* Query Tab Section ***************/
     void defaultQueryTabUI();
     void setQueryTabFieldsStatus(bool state);
+    bool compareQueryDates();
     //Actions
     void actionQueryReportChanges();
+    void actionValidationQuery();
+    void actioncheckBoxQueryRenterChanged(int status);
     /***********************************************/
 
     /************* Money Tab Section ***************/
     void defaultMoneyTabUI();
     void setMoneyTabFieldsStatus(bool state);
+    QList<QString> getDataMoney();
     //Actions
     void actionCheckBoxAddFreeMoney();
     void actionButtonMoneyEmpty();
+    void actionValidationMoney();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
@@ -72,16 +77,19 @@ private slots:
     //*** SIGNAL AND SLOT for Money Tab ***
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
     void on_buttonMoneyEmpty_clicked();
+    void on_buttonMoneySave_clicked();
 
     //*** SIGNAL AND SLOT for Renter Tab***
     void on_buttonRenterEmpty_clicked();
     void on_buttonEstateEmpty_clicked();
-
+    void on_buttonRenterSave_clicked();
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
 
-    void on_buttonRenterSave_clicked();
+
+
+
 
 private:
     Ui::MainWindow *ui;

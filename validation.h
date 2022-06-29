@@ -9,6 +9,7 @@ public:
     validation();
     QString estatesValidation(QList<QString> data);
     QString renterValidation(QList<QString> data);
+    QString moneyValidation(QList<QString> data);
 };
 
 #endif // VALIDATION_H

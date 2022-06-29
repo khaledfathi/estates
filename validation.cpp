@@ -47,3 +47,12 @@ QString validation::renterValidation(QList<QString> data)
     }
     return message;
 }
+
+QString validation::moneyValidation(QList<QString> data)
+{
+    QString message ="";
+    if (data[3].toFloat() == 0){
+        message += "المبلغ المدفوع لا يمكن ان يكون صفر\n";
+    }
+    return message;
+}
