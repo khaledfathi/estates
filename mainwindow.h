@@ -22,7 +22,10 @@ public:
     /************* MainWindow Section ***************/
 
     //Actions
+    void actionEstatesFiledsFromDatabase();
     void actionbuttonExit();
+    void actionAboutQt();
+    void actionAboutApp();
     /************************************************/
 
     /************* Query Tab Section ***************/
@@ -33,6 +36,7 @@ public:
     void actionQueryReportChanges();
     void actionValidationQuery();
     void actioncheckBoxQueryRenterChanged(int status);
+    void actionShowQueryResult();
     /***********************************************/
 
     /************* Money Tab Section ***************/
@@ -55,9 +59,10 @@ public:
 
     /************* Estate Tab Section ***************/
     QList<QString> getDataEstate();
+    void getEstateRecord(QList<QString> *textData , QList<int> *digitData);
     //*** Actions
     void actionButtonEstateEmpty ();
-    void actionValidationEstate();
+    void actionaAddEstateRecord();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
@@ -68,6 +73,8 @@ private slots:
     //*** SIGNAL AND SLOT MainWindow General***
     void on_buttonExit_clicked();
     void on_menuExit_triggered();
+    void on_menuAboutQt_triggered();
+    void on_menuAboutApp_triggered();
 
     //*** SIGNAL AND SLOT for Query Tab ***
     void on_comboBoxQueryReport_currentIndexChanged(int index);
@@ -86,6 +93,9 @@ private slots:
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
+
+
+
 
 
 

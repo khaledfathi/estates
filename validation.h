@@ -5,6 +5,8 @@
 
 class validation
 {
+private:
+    bool isNumberWithSpaces(QString stringNumbers);
 public:
     validation();
     QString estatesValidation(QList<QString> data);

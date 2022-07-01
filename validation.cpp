@@ -7,6 +7,17 @@ validation::validation()
 {
 
 }
+bool validation::isNumberWithSpaces(QString stringNumbers)
+{
+    QRegExp re("\\d*");
+    QString lineWithNoSpaces ="";
+    for (int i=0; i<stringNumbers.size(); i++){
+        if (stringNumbers[i] != ' '){
+            lineWithNoSpaces += stringNumbers[i];
+        }
+    }
+    return re.exactMatch(lineWithNoSpaces);
+}
 
 QString validation::estatesValidation(QList<QString> data)
 {
@@ -33,14 +44,23 @@ QString validation::estatesValidation(QList<QString> data)
 QString validation::renterValidation(QList<QString> data)
 {
     QString message ="";
-    if (data[1] == "" || data[1] == "0"){
+    if (data[1].isEmpty()|| data[1] == "0"){
         message += "رقم الشقة لايمكن ان يكون صفر\n";
     }
-    if (data[3] == ""){
+    if (data[3].isEmpty()){
         message += "اسم المستأجر (اجبارى)\n";
     }
-    if (data[4] == ""){
+
+    QRegExp re("\\d*"); //[digit] one or more
+    if (data[4].isEmpty()){
         message += "الرقم القومى (اجبارى)\n";
+    }else if (!re.exactMatch(data[4])){
+        message += "الرقم القومى (ارقام فقط)\n";
+    }else if(data[4].size() < 14){
+        message += "رقم قومى خاطئ - الرقم القومى 14 رقم\n";
+    }
+    if (!isNumberWithSpaces(data[5])){
+        message += "رقم التليفون (ارقام فقط والفاصل مسافة)\n";
     }
     if (data[6] == data[7]){
         message+= "تاريخ العقد وانتهاءة متطابقين\n";

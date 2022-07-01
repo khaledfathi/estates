@@ -4,9 +4,11 @@
 #include "database.h"
 #include <QDir>
 #include "validation.h"
+#include "about.h"
+#include "queryresult.h""
 
 /**Global**/
-QString databaseFilePath = QDir::currentPath()+"/test.db";
+QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
 /**********/
 
 MainWindow::MainWindow(QWidget *parent)
@@ -44,6 +46,15 @@ void MainWindow::setCurrentDateUI(){
 /************* MainWindow Section ***************/
 
 //*** Actions for MainWindow Tab ***
+void MainWindow::actionEstatesFiledsFromDatabase()
+{
+    database db(databaseFilePath);
+    db.EstatesList(ui->comboBoxMoneyEstate);
+    db.EstatesList(ui->comboBoxQueryEstate);
+    db.EstatesList(ui->comboBoxRenterEstate);
+    db.EstatesList(ui->comboBoxReceiptEstate);
+}
+
 void MainWindow::actionbuttonExit(){
     QMessageBox confirm(this);
     confirm.setWindowTitle("خروج");
@@ -57,6 +68,15 @@ void MainWindow::actionbuttonExit(){
         this->close();
     }
 }
+void MainWindow::actionAboutQt(){
+    QMessageBox::aboutQt(this,"About Qt GUI");
+}
+void MainWindow::actionAboutApp(){
+    about *about_ = new about(this);
+    about_->setModal(true);
+    about_->show();
+}
+
 //*** SIGNAL AND SLOT for MainWindow Tab ***
 void MainWindow::on_menuExit_triggered()
 {
@@ -66,6 +86,16 @@ void MainWindow::on_menuExit_triggered()
 void MainWindow::on_buttonExit_clicked()
 {
     actionbuttonExit();
+}
+
+void MainWindow::on_menuAboutQt_triggered()
+{
+    actionAboutQt();
+}
+
+void MainWindow::on_menuAboutApp_triggered()
+{
+    actionAboutApp();
 }
 
 /************************************************/
@@ -90,7 +120,7 @@ void MainWindow::setQueryTabFieldsStatus(bool state)
     ui->buttonQuery->setDisabled(state);
 }
 
-bool MainWindow::compareQueryDates() //#################################### AAAAA
+bool MainWindow::compareQueryDates()
 {
     return !( ui->dateEditQueryDateFrom->date() <= ui->dateEditQueryDateTo->date());
 }
@@ -150,6 +180,12 @@ void MainWindow::actioncheckBoxQueryRenterChanged(int status)
         ui->comboBoxQueryRenter->setDisabled(true);
     }
 }
+void MainWindow::actionShowQueryResult()
+{
+    queryResult *res = new queryResult (this) ;
+    res->showData();
+    res->show();
+}
 
 //*** SIGNAL AND SLOT for Query Tab ***
 void MainWindow::on_comboBoxQueryReport_currentIndexChanged(int index)
@@ -165,6 +201,7 @@ void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
 void MainWindow::on_buttonQuery_clicked()
 {
     actionValidationQuery();
+    actionShowQueryResult();
 }
 /***********************************************/
 
@@ -213,6 +250,7 @@ void MainWindow::actionCheckBoxAddFreeMoney()
         ui->RadioDeposite->setDisabled(false);
         ui->radioWithdraw->setDisabled(false);
         ui->dateEditMoneyDate->setDisabled(false);
+        ui->spinBoxMoneyYear->setDisabled(true);
     }else {
         setMoneyTabFieldsStatus(false);
     }
@@ -230,9 +268,10 @@ void MainWindow::actionValidationMoney()
 {
     validation valid ;
     QString message = valid.moneyValidation(getDataMoney());
-    QMessageBox::warning(this,"",message);
+    if (!message.isEmpty()){
+        QMessageBox::warning(this,"",message);
+    }
 }
-
 
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
@@ -303,7 +342,7 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 }
 void MainWindow::on_buttonRenterSave_clicked()
 {
-    actionValidationRenter();
+    actionValidationRenter();  
 }
 /************************************************/
 
@@ -320,6 +359,17 @@ QList<QString> MainWindow::getDataEstate()
     return data;
 }
 
+void MainWindow::getEstateRecord(QList<QString> *textData , QList<int> *digitData)
+{
+    textData->push_back(ui->lineEditEstateName->text().simplified());
+    textData->push_back(ui->lineEditOwnerName->text().simplified());
+    textData->push_back(ui->lineEditEstateAddress->text().simplified());
+    textData->push_back(ui->textEditEstatesNotes->toPlainText());
+
+    digitData->push_back(ui->spinBoxFloors->value());
+    digitData->push_back(ui->spinBoxAppartments->value());
+}
+
 //*** Actions for Esate Tab ***
 void MainWindow::actionButtonEstateEmpty ()
 {
@@ -331,12 +381,25 @@ void MainWindow::actionButtonEstateEmpty ()
     ui->textEditEstatesNotes->clear();
 }
 
-void MainWindow::actionValidationEstate()
+void MainWindow::actionaAddEstateRecord()
 {
+    //validation field entry first
     validation valid ;
     QString message = valid.estatesValidation(getDataEstate());
     if (!message.isEmpty()){
       QMessageBox::warning(this,"",message);
+    }else{
+        QList<QString> textData ;
+        QList<int> digitData;
+        getEstateRecord(&textData , &digitData);
+        database db(databaseFilePath);
+        if (db.checkEstatesDuplicated(textData[0]) && !textData[0].isEmpty()){
+            QMessageBox::warning(this,"","اسم رمزى للعقار : الاسم مسجل مسبقاً");
+        }else{
+            db.estateRecord(textData , digitData);
+            QMessageBox::information(this,"","تم الحفظ");
+            actionButtonEstateEmpty();
+        }
     }
 }
 
@@ -348,17 +411,23 @@ void MainWindow::on_buttonEstateEmpty_clicked()
 
 void MainWindow::on_buttonEstateSave_clicked()
 {
-    actionValidationEstate();
+    actionaAddEstateRecord();
+    actionEstatesFiledsFromDatabase();
 }
 /************************************************/
 
+
 /************* Recipet Tab Section ***************/
+//*** Actions for RecipetTab ***
+
+//*** SIGNAL AND SLOT for Recipet Tab***
 /************************************************/
 
 
+
 /*###############################################*/
 /*###############################################*/
-
-
 /**** TESTING *****/
+
+
 
