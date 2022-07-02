@@ -23,6 +23,7 @@ public:
 
     //Actions
     void actionEstatesFiledsFromDatabase();
+    void actionRentersFiledsFromDatabase();
     void actionbuttonExit();
     void actionAboutQt();
     void actionAboutApp();
@@ -53,9 +54,11 @@ public:
     /************* Renter Tab Section ***************/
     bool compareContractDates();
     QList<QString> getDateRenter();
+    void getRenterRecord(QList<QString> *textData , QList<int> *digitData);
     //*** Actions
     void actionButtonRenterEmpty();
     void actionValidationRenter();
+    void actionaAddRenterRecord();
     /************************************************/
 
     /************* Estate Tab Section ***************/

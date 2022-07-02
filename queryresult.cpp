@@ -20,7 +20,8 @@ queryResult::~queryResult()
 void queryResult::showData()
 {
     database db(databaseFilePath);
-    db.setTestModel(ui->treeViewResults);
+    db.setTestModel(ui->treeViewResults , "estates");
+    db.setTestModel(ui->treeViewResults2 , "renters");
 }
 
 void queryResult::on_buttonExit_clicked()

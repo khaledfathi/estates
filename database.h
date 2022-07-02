@@ -17,7 +17,8 @@ public:
     database(QString filePath);
     bool isDatabaseWork();
     /******* General *********/
-    void EstatesList (QComboBox *estateList);
+    void estatesList (QComboBox *estateList);
+    void rentersList (QComboBox *rentersList);
     /*************************/
 
     /*****Estates Records*****/
@@ -25,8 +26,12 @@ public:
     void estateRecord(QList<QString> textData , QList<int> digitData);
     /************************/
 
+    /*****Renters Records*****/
+    void RenterRecord (QList<QString> textData , QList<int> digitData);
+    /************************/
+
      //**** TEST ****
-    void setTestModel(QTreeView *resultTable);
+    void setTestModel(QTreeView *resultTable , QString tableName);
 
 };
 

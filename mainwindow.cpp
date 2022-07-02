@@ -32,6 +32,7 @@ void MainWindow::defaultSetupUI(){
     defaultQueryTabUI();
     defaultMoneyTabUI();
     actionEstatesFiledsFromDatabase();
+    actionRentersFiledsFromDatabase();
 }
 
 void MainWindow::setCurrentDateUI(){
@@ -51,10 +52,17 @@ void MainWindow::setCurrentDateUI(){
 void MainWindow::actionEstatesFiledsFromDatabase()
 {
     database db(databaseFilePath);
-    db.EstatesList(ui->comboBoxMoneyEstate);
-    db.EstatesList(ui->comboBoxQueryEstate);
-    db.EstatesList(ui->comboBoxRenterEstate);
-    db.EstatesList(ui->comboBoxReceiptEstate);
+    db.estatesList(ui->comboBoxMoneyEstate);
+    db.estatesList(ui->comboBoxQueryEstate);
+    db.estatesList(ui->comboBoxRenterEstate);
+    db.estatesList(ui->comboBoxReceiptEstate);
+}
+void MainWindow::actionRentersFiledsFromDatabase()
+{
+    database db(databaseFilePath);
+    db.rentersList(ui->comboBoxReceiptRenter);
+    db.rentersList(ui->comboBoxMoneyRenter);
+    db.rentersList(ui->comboBoxQueryRenter);
 }
 
 void MainWindow::actionbuttonExit(){
@@ -325,6 +333,21 @@ QList<QString> MainWindow::getDateRenter()
     return data;
 }
 
+void MainWindow::getRenterRecord(QList<QString> *textData , QList<int> *digitData)
+{
+    textData->push_back(ui->comboBoxRenterEstate->currentText());
+    textData->push_back(ui->comboBoxApartmentType->currentText());
+    textData->push_back(ui->lineEditRenterName->text());
+    textData->push_back(ui->lineEditRenterNationalId->text());
+    textData->push_back(ui->lineEditRenterPhone->text());
+    textData->push_back(ui->dateEditContract->text());
+    textData->push_back(ui->dateEditContractEnd->text());
+    textData->push_back(ui->comboBoxContractType->currentText());
+
+    digitData->push_back(ui->spinBoxRenterApartmentNumber->value());
+    digitData->push_back(ui->spinBoxRenterMoneyValue->value());
+}
+
 //*** Actions for Renter Tab ***
 void MainWindow::actionButtonRenterEmpty()
 {
@@ -349,6 +372,15 @@ void MainWindow::actionButtonRenterEmpty()
      }
  }
 
+ void MainWindow::actionaAddRenterRecord()
+ {
+     QList<QString> textData;
+     QList<int> digitData;
+     getRenterRecord(&textData , &digitData);
+     database db(databaseFilePath);
+     db.RenterRecord(textData , digitData);
+ }
+
 //*** SIGNAL AND SLOT for Renter Tab***
 void MainWindow::on_buttonRenterEmpty_clicked()
 {
@@ -357,6 +389,8 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 void MainWindow::on_buttonRenterSave_clicked()
 {
     actionValidationRenter();  
+    actionaAddRenterRecord();
+    actionRentersFiledsFromDatabase();
 }
 /************************************************/
 
