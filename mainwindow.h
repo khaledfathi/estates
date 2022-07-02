@@ -47,6 +47,7 @@ public:
     void actionCheckBoxAddFreeMoney();
     void actionButtonMoneyEmpty();
     void actionValidationMoney();
+    void actionShowWaterInvoiceDialog();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
@@ -85,6 +86,7 @@ private slots:
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
     void on_buttonMoneyEmpty_clicked();
     void on_buttonMoneySave_clicked();
+    void on_buttonMoneyWaterInvoice_clicked();
 
     //*** SIGNAL AND SLOT for Renter Tab***
     void on_buttonRenterEmpty_clicked();
@@ -93,10 +95,6 @@ private slots:
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
-
-
-
-
 
 
 

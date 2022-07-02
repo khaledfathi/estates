@@ -30,6 +30,7 @@ bool database::createDatebaseTabels()
                         \"اسم_المستأجر\"  TEXT NOT NULL,\
                         \"الرقم_القومى\"  INTEGER NOT NULL,\
                         \"تليفون\"        INTEGER,\
+                        \"قيمة_الايجار\" INTEGER NOT NULL,\
                         \"تاريخ_العقد\"   TEXT,\
                         \"تاريخ_انتهاء_العقد\"    TEXT NOT NULL,\
                         \"نوع_العقد\"     TEXT NOT NULL,\
@@ -52,9 +53,16 @@ bool database::createDatebaseTabels()
                     FOREIGN KEY (\"rentersID\") REFERENCES renters(\"ID\")\
                 );"\
             );
-    /*db.exec("CREATE TABLE TABLE   \"n\" ( \"ID\" INTEGER NOT NULL UNIQUE,\
-            \"ooo\" INTEGER NOT NULL UNIQUE,\
- PRIMARY KEY(\"ID\" AUTOINCREMENT) )");*/
+    db.exec(\
+                "CREATE TABLE IF NOT EXISTS \"water_invoice\" (\
+                    \"ID\"	INTEGER NOT NULL UNIQUE,\
+                    \"estatesID\"	INTEGER NOT NULL,\
+                    \"عن_شهر\"	TEXT,\
+                    \"سنة\"	INTEGER,\
+                    PRIMARY KEY(\"ID\" AUTOINCREMENT),\
+                    FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\")\
+                );"\
+            );
     db.commit();
     db.close();
     return true;

@@ -62,8 +62,11 @@ QString validation::renterValidation(QList<QString> data)
     if (!isNumberWithSpaces(data[5])){
         message += "رقم التليفون (ارقام فقط والفاصل مسافة)\n";
     }
-    if (data[6] == data[7]){
-        message+= "تاريخ العقد وانتهاءة متطابقين\n";
+    if (data[6].isEmpty() || data[6] == "0"){
+        message += "قيمة الايجار لا يمكن ان تكون صفر\n";
+    }
+    if (data[7] == data[8]){
+        message+= "لا يمكن ان يكون تاريخ العقد وانتهاءة متطابقين\n";
     }
     return message;
 }

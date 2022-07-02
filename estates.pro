@@ -17,19 +17,22 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     queryresult.cpp \
-    validation.cpp
+    validation.cpp \
+    waterinvoice.cpp
 
 HEADERS += \
     about.h \
     database.h \
     mainwindow.h \
     queryresult.h \
-    validation.h
+    validation.h \
+    waterinvoice.h
 
 FORMS += \
     about.ui \
     mainwindow.ui \
-    queryresult.ui
+    queryresult.ui \
+    waterinvoice.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

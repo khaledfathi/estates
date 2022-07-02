@@ -5,7 +5,8 @@
 #include <QDir>
 #include "validation.h"
 #include "about.h"
-#include "queryresult.h""
+#include "queryresult.h"
+#include "waterinvoice.h""
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
@@ -30,6 +31,7 @@ void MainWindow::defaultSetupUI(){
     setCurrentDateUI();
     defaultQueryTabUI();
     defaultMoneyTabUI();
+    actionEstatesFiledsFromDatabase();
 }
 
 void MainWindow::setCurrentDateUI(){
@@ -224,6 +226,7 @@ void MainWindow::setMoneyTabFieldsStatus(bool state)
     ui->comboBoxMoneyType->setDisabled(state);
     ui->comboBoxMonyMonth->setDisabled(state);
     ui->textEditMoneyNotes->setDisabled(state);
+    ui->spinBoxMoneyYear->setDisabled(state);
 }
 QList<QString> MainWindow::getDataMoney()
 {
@@ -269,8 +272,13 @@ void MainWindow::actionValidationMoney()
     validation valid ;
     QString message = valid.moneyValidation(getDataMoney());
     if (!message.isEmpty()){
-        QMessageBox::warning(this,"",message);
+        QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
     }
+}
+void MainWindow::actionShowWaterInvoiceDialog()
+{
+    waterInvoice *waterInvoiceDialog = new waterInvoice();
+    waterInvoiceDialog->show();
 }
 
 //*** SIGNAL AND SLOT for money Tab***
@@ -287,6 +295,11 @@ void MainWindow::on_buttonMoneyEmpty_clicked()
 void MainWindow::on_buttonMoneySave_clicked()
 {
     actionValidationMoney();
+}
+
+void MainWindow::on_buttonMoneyWaterInvoice_clicked()
+{
+    actionShowWaterInvoiceDialog();
 }
 /***********************************************/
 
@@ -305,6 +318,7 @@ QList<QString> MainWindow::getDateRenter()
     data.push_back(ui->lineEditRenterName->text().simplified());
     data.push_back(ui->lineEditRenterNationalId->text().simplified());
     data.push_back(ui->lineEditRenterPhone->text().simplified());
+    data.push_back(QString::number(ui->spinBoxRenterMoneyValue->value()));
     data.push_back(ui->dateEditContract->date().toString());
     data.push_back(ui->dateEditContractEnd->date().toString());
     data.push_back(ui->comboBoxContractType->currentText());
@@ -331,7 +345,7 @@ void MainWindow::actionButtonRenterEmpty()
          message+="تاريخ التعاقد يجب ان يسبق تاريخ الانتهاء\n";
      }
      if (!message.isEmpty()){
-         QMessageBox::warning(this,"",message);
+         QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
      }
  }
 
@@ -387,17 +401,17 @@ void MainWindow::actionaAddEstateRecord()
     validation valid ;
     QString message = valid.estatesValidation(getDataEstate());
     if (!message.isEmpty()){
-      QMessageBox::warning(this,"",message);
+      QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
     }else{
         QList<QString> textData ;
         QList<int> digitData;
         getEstateRecord(&textData , &digitData);
         database db(databaseFilePath);
         if (db.checkEstatesDuplicated(textData[0]) && !textData[0].isEmpty()){
-            QMessageBox::warning(this,"","اسم رمزى للعقار : الاسم مسجل مسبقاً");
+            QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "اسم رمزى للعقار : الاسم مسجل مسبقا");
         }else{
             db.estateRecord(textData , digitData);
-            QMessageBox::information(this,"","تم الحفظ");
+            QMessageBox::information(this,"حالة العملية","تم الحفظ");
             actionButtonEstateEmpty();
         }
     }
@@ -428,6 +442,9 @@ void MainWindow::on_buttonEstateSave_clicked()
 /*###############################################*/
 /*###############################################*/
 /**** TESTING *****/
+
+
+
 
 
 
