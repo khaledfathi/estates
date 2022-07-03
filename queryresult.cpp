@@ -3,6 +3,7 @@
 #include "database.h"
 #include <QMessageBox>
 
+
 extern QString databaseFilePath;
 
 queryResult::queryResult(QWidget *parent) :
@@ -24,8 +25,27 @@ void queryResult::showData()
     db.setTestModel(ui->treeViewResults2 , "renters");
 }
 
+void queryResult::deleteAll()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE") ;
+    db.setDatabaseName(databaseFilePath);
+
+    db.open();
+    db.exec("DELETE FROM renters");
+    db.exec("DELETE FROM estates");
+    db.commit();
+    db.close();
+    showData();
+}
+
 void queryResult::on_buttonExit_clicked()
 {
     this->close();
+}
+
+
+void queryResult::on_buttonDeleteAll_clicked()
+{
+    deleteAll();
 }
 

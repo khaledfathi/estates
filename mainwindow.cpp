@@ -6,7 +6,11 @@
 #include "validation.h"
 #include "about.h"
 #include "queryresult.h"
-#include "waterinvoice.h""
+#include "waterinvoice.h"
+
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlRecord>
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
@@ -321,8 +325,8 @@ QList<QString> MainWindow::getDateRenter()
 {
     QList<QString> data;
     data.push_back(ui->comboBoxRenterEstate->currentText());
-    data.push_back(QString::number(ui->spinBoxRenterApartmentNumber->value()));
     data.push_back(ui->comboBoxApartmentType->currentText());
+    data.push_back(QString::number(ui->spinBoxRenterUnitNumber->value()));
     data.push_back(ui->lineEditRenterName->text().simplified());
     data.push_back(ui->lineEditRenterNationalId->text().simplified());
     data.push_back(ui->lineEditRenterPhone->text().simplified());
@@ -344,43 +348,62 @@ void MainWindow::getRenterRecord(QList<QString> *textData , QList<int> *digitDat
     textData->push_back(ui->dateEditContractEnd->text());
     textData->push_back(ui->comboBoxContractType->currentText());
 
-    digitData->push_back(ui->spinBoxRenterApartmentNumber->value());
+    digitData->push_back(ui->spinBoxRenterUnitNumber->value());
     digitData->push_back(ui->spinBoxRenterMoneyValue->value());
 }
 
 //*** Actions for Renter Tab ***
 void MainWindow::actionButtonRenterEmpty()
 {
-    ui->spinBoxRenterApartmentNumber->setValue(0);
     ui->comboBoxApartmentType->setCurrentIndex(0);
+    ui->spinBoxRenterUnitNumber->setValue(0);
     ui->lineEditRenterName->clear();
     ui->lineEditRenterNationalId->clear();
     ui->lineEditRenterPhone->clear();
+    ui->spinBoxRenterMoneyValue->clear();
     ui->dateEditContract->setDate(QDate::currentDate());
     ui->dateEditContractEnd->setDate(QDate::currentDate());
     ui->comboBoxContractType->setCurrentIndex(0);
 }
- void MainWindow::actionValidationRenter()
- {
-     validation valid;
-     QString message = valid.renterValidation(getDateRenter());
-     if (compareContractDates()){
-         message+="تاريخ التعاقد يجب ان يسبق تاريخ الانتهاء\n";
-     }
-     if (!message.isEmpty()){
-         QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
-     }
- }
 
- void MainWindow::actionaAddRenterRecord()
- {
-     QList<QString> textData;
-     QList<int> digitData;
-     getRenterRecord(&textData , &digitData);
-     database db(databaseFilePath);
-     db.RenterRecord(textData , digitData);
- }
+void MainWindow::actionaAddRenterRecord()
+{
+    validation valid;
+    QString message = valid.renterValidation(getDateRenter());
+    if (compareContractDates()){
+        message+="تاريخ التعاقد يجب ان يسبق تاريخ الانتهاء\n";
+    }
+    if (!message.isEmpty()){
+        QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
+    }else {
+        database db(databaseFilePath);
+        QString DatabaseMessage = db.checkMaxUnitNumber(ui->comboBoxRenterEstate->currentText() , ui->comboBoxApartmentType->currentText() , ui->spinBoxRenterUnitNumber->value());
+        if (!DatabaseMessage.isEmpty()){
+            QMessageBox::warning(this, "خطأ فى البيانات المسجلة" , DatabaseMessage);
+        }else {
+            if (db.checkDuplicatedUnitNumber(ui->comboBoxRenterEstate->currentText() , ui->comboBoxApartmentType->currentText() , ui->spinBoxRenterUnitNumber->value()) ){
+                QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "رقم الوحدة مسجل مسبقاً");
+            }else {
+                QList<QString> textData;
+                QList<int> digitData;
+                getRenterRecord(&textData , &digitData);
+                database db(databaseFilePath);
+                db.RenterRecord(textData , digitData);
+                QMessageBox::information(this,"حالة العملية", "تم الحفظ");
+            }
+        }
+    }
+}
 
+void MainWindow::actionApartmentTypeChanges()
+{
+    if ( ui->comboBoxApartmentType->currentText() == "شقة" ){
+        ui->labelUnitNumber->setText("رقم الوحدة (شقة)");
+
+    }else if ( ui->comboBoxApartmentType->currentText() == "محل" ){
+        ui->labelUnitNumber->setText("رقم الوحدة (محل)");
+    }
+}
 //*** SIGNAL AND SLOT for Renter Tab***
 void MainWindow::on_buttonRenterEmpty_clicked()
 {
@@ -388,10 +411,15 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 }
 void MainWindow::on_buttonRenterSave_clicked()
 {
-    actionValidationRenter();  
     actionaAddRenterRecord();
     actionRentersFiledsFromDatabase();
 }
+
+void MainWindow::on_comboBoxApartmentType_currentIndexChanged(int index)
+{
+    actionApartmentTypeChanges();
+}
+
 /************************************************/
 
 /************* Estate Tab Section ***************/
@@ -412,10 +440,11 @@ void MainWindow::getEstateRecord(QList<QString> *textData , QList<int> *digitDat
     textData->push_back(ui->lineEditEstateName->text().simplified());
     textData->push_back(ui->lineEditOwnerName->text().simplified());
     textData->push_back(ui->lineEditEstateAddress->text().simplified());
-    textData->push_back(ui->textEditEstatesNotes->toPlainText());
+    textData->push_back(ui->textEditEstatesNotes->toPlainText().simplified());
 
     digitData->push_back(ui->spinBoxFloors->value());
     digitData->push_back(ui->spinBoxAppartments->value());
+    digitData->push_back(ui->spinBoxWorkshops->value());
 }
 
 //*** Actions for Esate Tab ***
@@ -426,6 +455,7 @@ void MainWindow::actionButtonEstateEmpty ()
     ui->lineEditEstateAddress->clear();
     ui->spinBoxFloors->setValue(0);
     ui->spinBoxAppartments->setValue(0);
+    ui->spinBoxWorkshops->setValue(0);
     ui->textEditEstatesNotes->clear();
 }
 
@@ -476,6 +506,10 @@ void MainWindow::on_buttonEstateSave_clicked()
 /*###############################################*/
 /*###############################################*/
 /**** TESTING *****/
+
+
+
+
 
 
 

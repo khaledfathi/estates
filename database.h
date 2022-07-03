@@ -28,6 +28,8 @@ public:
 
     /*****Renters Records*****/
     void RenterRecord (QList<QString> textData , QList<int> digitData);
+    QString checkMaxUnitNumber (QString estate , QString unitType , int unitNumber);
+    bool checkDuplicatedUnitNumber(QString estate , QString unitType , int unitNumber);
     /************************/
 
      //**** TEST ****

@@ -55,9 +55,9 @@ public:
     bool compareContractDates();
     QList<QString> getDateRenter();
     void getRenterRecord(QList<QString> *textData , QList<int> *digitData);
+    void actionApartmentTypeChanges();
     //*** Actions
     void actionButtonRenterEmpty();
-    void actionValidationRenter();
     void actionaAddRenterRecord();
     /************************************************/
 
@@ -95,6 +95,7 @@ private slots:
     void on_buttonRenterEmpty_clicked();
     void on_buttonEstateEmpty_clicked();
     void on_buttonRenterSave_clicked();
+    void on_comboBoxApartmentType_currentIndexChanged(int index);
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();

@@ -19,6 +19,7 @@ bool database::createDatebaseTabels()
                     \"عنوان_العقار\"	TEXT NOT NULL,\
                     \"عدد_الطوابق\"	INTEGER NOT NULL,\
                     \"عدد_الشقق\"	INTEGER NOT NULL,\
+                    \"عدد_المحلات\"	INTEGER NOT NULL,\
                     \"تفاصيل_اخرى\"	TEXT,\
                     PRIMARY KEY(\"ID\" AUTOINCREMENT)\
                 );"\
@@ -27,7 +28,7 @@ bool database::createDatebaseTabels()
                 "CREATE TABLE IF NOT EXISTS \"renters\" (\
                         \"ID\"    INTEGER NOT NULL UNIQUE,\
                         \"estatesID\"     INTEGER  NOT NULL,\
-                        \"رقم_الشقة\"     INTEGER UNIQUE NOT NULL,\
+                        \"رقم_الوحدة\"     INTEGER  NOT NULL,\
                         \"نوع_العين_المؤجرة\"  TEXT  NOT NULL,\
                         \"اسم_المستأجر\"  TEXT NOT NULL,\
                         \"الرقم_القومى\"  TEXT NOT NULL,\
@@ -43,8 +44,8 @@ bool database::createDatebaseTabels()
     db.exec(\
                 "CREATE TABLE IF NOT EXISTS \"money\" (\
                     \"ID\"	INTEGER NOT NULL UNIQUE,\
-                    \"estatesID\"	INTEGER UNIQUE NOT NULL,\
-                    \"rentersID\"	INTEGER UNIQUE NOT NULL,\
+                    \"estatesID\"	INTEGER  NOT NULL,\
+                    \"rentersID\"	INTEGER  NOT NULL,\
                     \"تاريخ_العملية\"	TEXT NOT NULL,\
                     \"المبلغ_المدفوع\"	REAL NOT NULL,\
                     \"نوع_المعاملة\"	TEXT NOT NULL,\
@@ -58,7 +59,7 @@ bool database::createDatebaseTabels()
     db.exec(\
                 "CREATE TABLE IF NOT EXISTS \"water_invoice\" (\
                     \"ID\"	INTEGER NOT NULL UNIQUE,\
-                    \"estatesID\"	INTEGER NOT NULL UNIQUE,\
+                    \"estatesID\"	INTEGER NOT NULL ,\
                     \"عن_شهر\"	TEXT NOT NULL,\
                     \"سنة\"	INTEGER NOT NULL,\
                     PRIMARY KEY(\"ID\" AUTOINCREMENT),\
@@ -126,6 +127,7 @@ void database::estateRecord(QList<QString> textData , QList<int> digitData)
               \"عنوان_العقار\",\
               \"عدد_الطوابق\",\
               \"عدد_الشقق\",\
+              \"عدد_المحلات\",\
               \"تفاصيل_اخرى\"\
           ) VALUES (\
               \"%1\",\
@@ -133,9 +135,10 @@ void database::estateRecord(QList<QString> textData , QList<int> digitData)
               \"%3\",\
               %4,\
               %5,\
-              \"%6\"\
+              %6,\
+              \"%7\"\
           );";
-    sql = sql.arg(textData[0],textData[1],textData[2],QString::number(digitData[0]),QString::number(digitData[1]),textData[3]);
+    sql = sql.arg(textData[0],textData[1],textData[2],QString::number(digitData[0]),QString::number(digitData[1]),QString::number(digitData[2]),textData[3]);
     db.exec(sql);
     db.commit();
     db.close();
@@ -157,7 +160,7 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
     db.open();
     QString sql="INSERT INTO \"renters\" (\
             estatesID,\
-            رقم_الشقة,\
+            رقم_الوحدة,\
             نوع_العين_المؤجرة,\
             اسم_المستأجر,\
             الرقم_القومى,\
@@ -182,6 +185,69 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
     db.commit();
     db.close();
 }
+
+QString database::checkMaxUnitNumber (QString estate , QString unitType , int unitNumber)
+{
+    QString message = "";
+    int MaxUnitNumber ;
+    db.open();
+    QSqlQuery qry(db);
+    if (unitType == "شقة"){
+        qry.exec(QString("SELECT estates.عدد_الشقق FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate) );
+        qry.next();
+        MaxUnitNumber = qry.record().value(0).toInt();
+        if(unitNumber > MaxUnitNumber){
+            message = "عدد الشقق فى العقار : "+QString::number(MaxUnitNumber);
+            db.close();
+        }
+
+    }else if (unitType == "محل"){
+        qry.exec(QString("SELECT estates.عدد_المحلات FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate) );
+        qry.next();
+        MaxUnitNumber = qry.record().value(0).toInt();
+        if(unitNumber > MaxUnitNumber){
+            message = "عدد المحلات فى العقار : "+QString::number(MaxUnitNumber);
+            db.close();
+        }
+    }
+    db.close();
+    return message;
+}
+
+bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int unitNumber)
+{
+    db.open();
+    QSqlQuery qryID(db) ;
+    qryID.exec(QString("SELECT estates.ID FROM estates Where estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryID.next();
+    int ID = qryID.value(0).toInt();
+    db.open();
+
+    QString sql = QString("SELECT renters.رقم_الوحدة FROM estates , renters WHERE renters.estatesID=%1 and renters.نوع_العين_المؤجرة='%2' and renters.رقم_الوحدة=%3").arg(QString::number(ID),unitType,QString::number(unitNumber)) ;
+    QSqlQuery qry;
+
+    if (unitType == "شقة"){
+        db.open();
+        qry.exec(sql);
+        qry.next();
+        if (qry.record().value(0).toInt() == unitNumber){
+            db.close();
+            return true;
+        }
+    }else if (unitType == "محل"){
+        db.open();
+        qry.exec(sql);
+        qry.next();
+        if (qry.record().value(0).toInt() == unitNumber){
+            db.close();
+            return true;
+        }
+    }
+    db.close();
+    return false;
+
+}
+
 /************************/
 
 

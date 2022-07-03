@@ -44,13 +44,15 @@ QString validation::estatesValidation(QList<QString> data)
 QString validation::renterValidation(QList<QString> data)
 {
     QString message ="";
-    if (data[1].isEmpty()|| data[1] == "0"){
+    if (data[0].isEmpty()){
+        message+= "سجل عقار اولاً\n";
+    }
+    if (data[2].isEmpty()|| data[2] == "0"){
         message += "رقم الشقة لايمكن ان يكون صفر\n";
     }
     if (data[3].isEmpty()){
         message += "اسم المستأجر (اجبارى)\n";
     }
-
     QRegExp re("\\d*"); //[digit] one or more
     if (data[4].isEmpty()){
         message += "الرقم القومى (اجبارى)\n";
@@ -74,6 +76,12 @@ QString validation::renterValidation(QList<QString> data)
 QString validation::moneyValidation(QList<QString> data)
 {
     QString message ="";
+    if (data[0].isEmpty()){
+        message += "سجل عقار أولاً\n";
+    }
+    if (data[1].isEmpty()){
+        message += "سجل مستأجر أولاً\n";
+    }
     if (data[3].toFloat() == 0){
         message += "المبلغ المدفوع لا يمكن ان يكون صفر\n";
     }
