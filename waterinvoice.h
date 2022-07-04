@@ -15,9 +15,27 @@ public:
     explicit waterInvoice(QWidget *parent = nullptr);
     ~waterInvoice();
 
-private slots:
-    void on_pushButton_2_clicked();
+    /******* General *********/
+    void defaultUI();
+    void setEstateField();
+    /*************************/
 
+    /********* waterInvoice Dialog ***********/
+    void getDataRecord(QList<QString> *textDate , QList<double> *doubleDate , QList<int> *intData);
+    //Actions
+    void actionUIChangesForRegister();
+    void actionUIChangesForEdit();
+    void actionAddWaterInvoiceRecord();
+    /*****************************************/
+
+
+
+private slots:
+    //*** SIGNAL AND SLOT for WaterInvoice Dialog***
+    void on_radioRrgisterInvoice_clicked();
+    void on_buttonExit_clicked();
+    void on_radioEditInvoice_clicked();
+    void on_buttonSave_clicked();
 
 private:
     Ui::waterInvoice *ui;

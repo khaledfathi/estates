@@ -1,6 +1,7 @@
 #include "database.h"
 #include <QDir>
 #include <QSqlRecord>
+#include <QMessageBox>
 
 database::database(QString filePath)
 {
@@ -65,6 +66,7 @@ bool database::createDatebaseTabels()
                     \"estatesID\"	INTEGER NOT NULL ,\
                     \"عن_شهر\"	TEXT NOT NULL,\
                     \"سنة\"	INTEGER NOT NULL,\
+                    \"قيمة_الفاتورة\" REAL NOT NULL,\
                     PRIMARY KEY(\"ID\" AUTOINCREMENT),\
                     FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\")\
                 );"\
@@ -268,10 +270,33 @@ void database::MoneyRecord (QList<QString> textData , QList<double> doubleData ,
 {
 
 }
-
 /****************************/
 
-
+/***** Water Invoce Records*****/
+void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData)
+{
+    db.open();
+    QSqlQuery qryEstateID;
+    qryEstateID.prepare(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textDate[0]));
+    qryEstateID.exec();
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+    db.open();
+    QString sql="INSERT INTO water_invoice (\
+                estatesID ,\
+                عن_شهر , \
+                سنة,\
+                قيمة_الفاتورة)\
+                VALUES (%1 , '%2' , %3 , %4)";
+    sql = sql.arg( estateID ,\
+                textDate[1] ,\
+                QString::number(intData[2]),\
+                QString::number(doubleDate[0]));
+    db.exec(sql);
+    db.close();
+}
+/*******************************/
 
 
 /**********************************/

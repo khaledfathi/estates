@@ -317,7 +317,7 @@ void MainWindow::actionValidationMoney()
 }
 void MainWindow::actionShowWaterInvoiceDialog()
 {
-    waterInvoice *waterInvoiceDialog = new waterInvoice();
+    waterInvoice *waterInvoiceDialog = new waterInvoice(this);
     waterInvoiceDialog->show();
 }
 void MainWindow::actionaAddMoneyRecord()

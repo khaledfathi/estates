@@ -24,6 +24,8 @@ void queryResult::showData()
     db.setTestModel(ui->treeViewResults , "estates");
     db.setTestModel(ui->treeViewResults2 , "renters");
     db.setTestModel(ui->treeViewResult3 , "money");
+    db.setTestModel(ui->treeVResult4 , "water_invoice");
+
 }
 
 void queryResult::deleteAll()
@@ -34,6 +36,7 @@ void queryResult::deleteAll()
     db.open();
     db.exec("DELETE FROM renters");
     db.exec("DELETE FROM estates");
+    db.exec("DELETE FROM water_invoice");
     db.commit();
     db.close();
     showData();

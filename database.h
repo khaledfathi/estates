@@ -37,6 +37,10 @@ public:
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     /************************/
 
+    /***** Water Invoce Records*****/
+    void waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData);
+    /*******************************/
+
      //**** TEST ****
     void setTestModel(QTreeView *resultTable , QString tableName);
 
