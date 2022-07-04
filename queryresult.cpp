@@ -23,6 +23,7 @@ void queryResult::showData()
     database db(databaseFilePath);
     db.setTestModel(ui->treeViewResults , "estates");
     db.setTestModel(ui->treeViewResults2 , "renters");
+    db.setTestModel(ui->treeViewResult3 , "money");
 }
 
 void queryResult::deleteAll()

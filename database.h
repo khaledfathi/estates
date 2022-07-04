@@ -33,8 +33,13 @@ public:
     bool checkDuplicatedUnitNumber(QString estate , QString unitType , int unitNumber);
     /************************/
 
+    /*****Money Records*****/
+    void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
+    /************************/
+
      //**** TEST ****
     void setTestModel(QTreeView *resultTable , QString tableName);
+
 
 };
 

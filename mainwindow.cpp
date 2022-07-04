@@ -256,13 +256,30 @@ QList<QString> MainWindow::getDataMoney()
     QList<QString> data;
     data.push_back(ui->comboBoxMoneyEstate->currentText());
     data.push_back(ui->comboBoxMoneyRenter->currentText());
-    data.push_back(ui->dateEditMoneyDate->date().toString());
+    data.push_back(ui->dateEditMoneyDate->date().toString("yyyy/M/d"));
     data.push_back(QString::number(ui->doubleSpinBoxMony->value()));
     data.push_back(ui->comboBoxMoneyType->currentText());
     data.push_back(QString::number(ui->comboBoxMonyMonth->currentIndex()+1));
     data.push_back(QString::number(ui->spinBoxMoneyYear->value()));
     data.push_back(ui->textEditMoneyNotes->toPlainText());
     return data;
+}
+void MainWindow::getMoneyRecord(QList<QString> *textData , QList<double> *doubleData , QList<int> *intData)
+{
+    //text data
+    textData->push_back(ui->comboBoxMoneyEstate->currentText());
+    textData->push_back(ui->comboBoxMoneyRenter->currentText());
+    textData->push_back(ui->dateEditMoneyDate->date().toString("yyyy/M/d"));
+    textData->push_back(ui->comboBoxMoneyType->currentText());
+    textData->push_back(ui->comboBoxMonyMonth->currentText());
+    textData->push_back(ui->textEditMoneyNotes->toPlainText());
+    //double data
+    doubleData->push_back(ui->doubleSpinBoxMony->value());
+    //int data
+    intData->push_back(ui->checkBoxAddFreeMoney->isChecked());
+    intData->push_back(ui->RadioDeposite->isChecked());
+    intData->push_back(ui->radioWithdraw->isChecked());
+    intData->push_back(ui->spinBoxMoneyYear->value());
 }
 
 //*** Actions for Mony Tab ***
@@ -302,6 +319,13 @@ void MainWindow::actionShowWaterInvoiceDialog()
 {
     waterInvoice *waterInvoiceDialog = new waterInvoice();
     waterInvoiceDialog->show();
+}
+void MainWindow::actionaAddMoneyRecord()
+{
+    QList<QString> textDate;
+    QList<double> doubleDate;
+    QList<int> intDate;
+    getMoneyRecord(&textDate, &doubleDate , &intDate);
 }
 
 //*** SIGNAL AND SLOT for money Tab***
@@ -348,8 +372,8 @@ QList<QString> MainWindow::getDateRenter()
     data.push_back(ui->lineEditRenterNationalId->text().simplified());
     data.push_back(ui->lineEditRenterPhone->text().simplified());
     data.push_back(QString::number(ui->spinBoxRenterMoneyValue->value()));
-    data.push_back(ui->dateEditContract->date().toString());
-    data.push_back(ui->dateEditContractEnd->date().toString());
+    data.push_back(ui->dateEditContract->date().toString("yyyy/M/d"));
+    data.push_back(ui->dateEditContractEnd->date().toString("yyyy/M/d"));
     data.push_back(ui->comboBoxContractType->currentText());
     return data;
 }
@@ -361,8 +385,8 @@ void MainWindow::getRenterRecord(QList<QString> *textData , QList<int> *digitDat
     textData->push_back(ui->lineEditRenterName->text());
     textData->push_back(ui->lineEditRenterNationalId->text());
     textData->push_back(ui->lineEditRenterPhone->text());
-    textData->push_back(ui->dateEditContract->text());
-    textData->push_back(ui->dateEditContractEnd->text());
+    textData->push_back(ui->dateEditContract->date().toString("yyyy/M/d"));
+    textData->push_back(ui->dateEditContractEnd->date().toString("yyyy/M/d"));
     textData->push_back(ui->comboBoxContractType->currentText());
 
     digitData->push_back(ui->spinBoxRenterUnitNumber->value());
@@ -429,6 +453,8 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 void MainWindow::on_buttonRenterSave_clicked()
 {
     actionaAddRenterRecord();
+    actionRentersFiledsFromDatabase("QUERY");
+    actionRentersFiledsFromDatabase("MONEY");
     actionRentersFiledsFromDatabase("RECIPET");
 }
 
@@ -508,6 +534,9 @@ void MainWindow::on_buttonEstateSave_clicked()
 {
     actionaAddEstateRecord();
     actionEstatesFiledsFromDatabase();
+    actionRentersFiledsFromDatabase("QUERY");
+    actionRentersFiledsFromDatabase("MONEY");
+    actionRentersFiledsFromDatabase("RECIPET");
 }
 /************************************************/
 
@@ -527,20 +556,6 @@ void MainWindow::on_comboBoxReceiptEstate_currentIndexChanged(int index)
 /*###############################################*/
 /*###############################################*/
 /**** TESTING *****/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

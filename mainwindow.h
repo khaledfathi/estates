@@ -44,11 +44,13 @@ public:
     void defaultMoneyTabUI();
     void setMoneyTabFieldsStatus(bool state);
     QList<QString> getDataMoney();
+    void getMoneyRecord(QList<QString> *textData , QList<double> *doubleData , QList<int> *intData);
     //Actions
     void actionCheckBoxAddFreeMoney();
     void actionButtonMoneyEmpty();
     void actionValidationMoney();
     void actionShowWaterInvoiceDialog();
+    void actionaAddMoneyRecord();
     /***********************************************/
 
     /************* Renter Tab Section ***************/

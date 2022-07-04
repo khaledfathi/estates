@@ -262,6 +262,18 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 /************************/
 
 
+/********Money Records********/
+
+void database::MoneyRecord (QList<QString> textData , QList<double> doubleData , QList<int> intData)
+{
+
+}
+
+/****************************/
+
+
+
+
 /**********************************/
 
 void database::setTestModel(QTreeView *resultTable , QString tableName){
