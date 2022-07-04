@@ -9,16 +9,17 @@
 class database
 {
 private:
-    QString databaseFile;
+    QString databaseFile;  
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     bool createDatebaseTabels();
 
 public:
     database(QString filePath);
+    ~database();
     bool isDatabaseWork();
     /******* General *********/
     void estatesList (QComboBox *estateList);
-    void rentersList (QComboBox *rentersList);
+    void rentersList (QComboBox *rentersList , QString estate);
     /*************************/
 
     /*****Estates Records*****/

@@ -23,7 +23,7 @@ public:
 
     //Actions
     void actionEstatesFiledsFromDatabase();
-    void actionRentersFiledsFromDatabase();
+    void actionRentersFiledsFromDatabase(QString location);
     void actionbuttonExit();
     void actionAboutQt();
     void actionAboutApp();
@@ -84,12 +84,16 @@ private slots:
     void on_comboBoxQueryReport_currentIndexChanged(int index);
     void on_checkBoxQueryRenter_stateChanged(int arg1);
     void on_buttonQuery_clicked();
+    void on_comboBoxQueryEstate_currentIndexChanged(int index);
+
 
     //*** SIGNAL AND SLOT for Money Tab ***
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
     void on_buttonMoneyEmpty_clicked();
     void on_buttonMoneySave_clicked();
     void on_buttonMoneyWaterInvoice_clicked();
+    void on_comboBoxMoneyEstate_currentIndexChanged(int index);
+
 
     //*** SIGNAL AND SLOT for Renter Tab***
     void on_buttonRenterEmpty_clicked();
@@ -100,7 +104,8 @@ private slots:
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
 
-
+    //*** SIGNAL AND SLOT for Recipet Tab***
+    void on_comboBoxReceiptEstate_currentIndexChanged(int index);
 
 
 private:

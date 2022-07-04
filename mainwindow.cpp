@@ -36,7 +36,9 @@ void MainWindow::defaultSetupUI(){
     defaultQueryTabUI();
     defaultMoneyTabUI();
     actionEstatesFiledsFromDatabase();
-    actionRentersFiledsFromDatabase();
+    actionRentersFiledsFromDatabase("MONEY");
+    actionRentersFiledsFromDatabase("RECIPET");
+    actionRentersFiledsFromDatabase("QUERY");
 }
 
 void MainWindow::setCurrentDateUI(){
@@ -61,12 +63,16 @@ void MainWindow::actionEstatesFiledsFromDatabase()
     db.estatesList(ui->comboBoxRenterEstate);
     db.estatesList(ui->comboBoxReceiptEstate);
 }
-void MainWindow::actionRentersFiledsFromDatabase()
+void MainWindow::actionRentersFiledsFromDatabase(QString location)
 {
     database db(databaseFilePath);
-    db.rentersList(ui->comboBoxReceiptRenter);
-    db.rentersList(ui->comboBoxMoneyRenter);
-    db.rentersList(ui->comboBoxQueryRenter);
+    if (location == "QUERY"){
+        db.rentersList(ui->comboBoxQueryRenter, ui->comboBoxQueryEstate->currentText());
+    }else if (location == "MONEY"){
+        db.rentersList(ui->comboBoxMoneyRenter, ui->comboBoxMoneyEstate->currentText());
+    }else if (location == "RECIPET"){
+        db.rentersList(ui->comboBoxReceiptRenter , ui->comboBoxReceiptEstate->currentText());
+    }
 }
 
 void MainWindow::actionbuttonExit(){
@@ -217,6 +223,11 @@ void MainWindow::on_buttonQuery_clicked()
     actionValidationQuery();
     actionShowQueryResult();
 }
+
+void MainWindow::on_comboBoxQueryEstate_currentIndexChanged(int index)
+{
+    actionRentersFiledsFromDatabase("QUERY");
+}
 /***********************************************/
 
 /************* Money Tab Section ***************/
@@ -313,6 +324,12 @@ void MainWindow::on_buttonMoneyWaterInvoice_clicked()
 {
     actionShowWaterInvoiceDialog();
 }
+
+void MainWindow::on_comboBoxMoneyEstate_currentIndexChanged(int index)
+{
+    actionRentersFiledsFromDatabase("MONEY");
+}
+
 /***********************************************/
 
 /************* Renter Tab Section ***************/
@@ -412,7 +429,7 @@ void MainWindow::on_buttonRenterEmpty_clicked()
 void MainWindow::on_buttonRenterSave_clicked()
 {
     actionaAddRenterRecord();
-    actionRentersFiledsFromDatabase();
+    actionRentersFiledsFromDatabase("RECIPET");
 }
 
 void MainWindow::on_comboBoxApartmentType_currentIndexChanged(int index)
@@ -499,6 +516,10 @@ void MainWindow::on_buttonEstateSave_clicked()
 //*** Actions for RecipetTab ***
 
 //*** SIGNAL AND SLOT for Recipet Tab***
+void MainWindow::on_comboBoxReceiptEstate_currentIndexChanged(int index)
+{
+    actionRentersFiledsFromDatabase("RECIPET");
+}
 /************************************************/
 
 
@@ -506,6 +527,13 @@ void MainWindow::on_buttonEstateSave_clicked()
 /*###############################################*/
 /*###############################################*/
 /**** TESTING *****/
+
+
+
+
+
+
+
 
 
 

@@ -8,6 +8,9 @@ database::database(QString filePath)
     db.setDatabaseName(databaseFile);
     createDatebaseTabels();
 }
+database::~database(){
+    db.removeDatabase("QSQLITE");
+}
 bool database::createDatebaseTabels()
 {
     db.open();
@@ -92,12 +95,20 @@ void database::estatesList (QComboBox *estateList)
     estateList->setModel(model);
     db.open();
 }
-void database::rentersList (QComboBox *rentersList)
+void database::rentersList (QComboBox *rentersList , QString estate)
 {
+    QString estatesID ;
+    db.open();
+    QSqlQuery *qryEstatesID = new QSqlQuery;
+    qryEstatesID->exec(QString("select estates.ID from estates where estates.اسم_رمزى_للعقار='%1' ").arg(estate));
+    qryEstatesID->next();
+    estatesID = qryEstatesID->record().value(0).toString();
+    db.close();
+
     db.open();
     QSqlQueryModel *model =new QSqlQueryModel();
     QSqlQuery *qry = new QSqlQuery(db);
-    qry->prepare("select renters.اسم_المستأجر from renters");
+    qry->prepare(QString("select renters.اسم_المستأجر from renters where renters.estatesID=%1").arg(estatesID));
     qry->exec();
     model->setQuery(*qry);
     rentersList->setModel(model);
