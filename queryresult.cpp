@@ -11,11 +11,13 @@ queryResult::queryResult(QWidget *parent) :
     ui(new Ui::queryResult)
 {
     ui->setupUi(this);
+    connect(ui->buttonDeleteAll , SIGNAL(clicked()) , parent , SLOT(clearEstatesFields()) );
+
 }
 
 queryResult::~queryResult()
 {
-    delete ui;
+    delete ui;    
 }
 
 void queryResult::showData()
@@ -47,10 +49,13 @@ void queryResult::on_buttonExit_clicked()
     this->close();
 }
 
+void queryResult::test(){
+
+}
 
 void queryResult::on_buttonDeleteAll_clicked()
 {
     deleteAll();
-
 }
+
 

@@ -139,24 +139,27 @@ void waterInvoice::actionAddWaterInvoiceRecord()
 }
 void waterInvoice::actionDeleteWaterInvoiceRecord()
 {
-    database db(databaseFilePath);
-    db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
+    if (ui->comboBoxEstate->currentText().isEmpty()){
+        QMessageBox::warning(this,"حالة العملية", "لا توجد فواتير للحذف");
+    }else {
+        database db(databaseFilePath);
+        db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
 
-    QMessageBox confirm(this) ;
-    confirm.setWindowTitle("حالة العملية");
-    confirm.setText("تأكيد الحذف !");
-    confirm.setLayoutDirection(Qt::LayoutDirection::RightToLeft);
-    confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-    confirm.setDefaultButton(QMessageBox::No);
-    confirm.button(QMessageBox::Yes)->setText("موافق");
-    confirm.button(QMessageBox::No)->setText("الغاء");
-    if (confirm.exec() == QMessageBox::Yes){
-        QMessageBox::information(this,"حالة العملية", "تم الحذف");
+        QMessageBox confirm(this) ;
+        confirm.setWindowTitle("حالة العملية");
+        confirm.setText("تأكيد الحذف !");
+        confirm.setLayoutDirection(Qt::LayoutDirection::RightToLeft);
+        confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        confirm.setDefaultButton(QMessageBox::No);
+        confirm.button(QMessageBox::Yes)->setText("موافق");
+        confirm.button(QMessageBox::No)->setText("الغاء");
+        if (confirm.exec() == QMessageBox::Yes){
+            QMessageBox::information(this,"حالة العملية", "تم الحذف");
+        }
+        ui->comboBoxMonth->clear();
+        db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);
+        db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->doubleSpinBoxInvoceValue);
     }
-    ui->comboBoxMonth->clear();
-    db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);
-    db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->doubleSpinBoxInvoceValue);
-
 
 }
 

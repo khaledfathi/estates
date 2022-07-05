@@ -16,10 +16,12 @@ public:
     ~queryResult();
     void showData();
     void deleteAll();
-
+    void test();
 private slots:
     void on_buttonExit_clicked();
     void on_buttonDeleteAll_clicked();
+
+
 
 private:
     Ui::queryResult *ui;
