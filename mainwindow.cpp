@@ -555,7 +555,12 @@ void MainWindow::on_comboBoxReceiptEstate_currentIndexChanged(int index)
 
 /*###############################################*/
 /*###############################################*/
+
+
 /**** TESTING *****/
 
-
-
+/*Will be deleted */
+void MainWindow::clearEstatesFields()
+{
+    defaultSetupUI();
+}

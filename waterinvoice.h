@@ -11,7 +11,23 @@ class waterInvoice : public QDialog
 {
     Q_OBJECT
 
+private:
+    QList<QString> months ={\
+        "1- يناير",\
+        "2- فبراير",\
+        "3- مارس",\
+        "4- ابريل",\
+        "5- مايو",\
+        "6- يونيو",\
+        "7- يوليو",\
+        "8- اغسطس",\
+        "9- سبتمبر",\
+        "10- اكتوبر",\
+        "11- نوفمبر",\
+        "12- ديسمبر",\
+    };
 public:
+
     explicit waterInvoice(QWidget *parent = nullptr);
     ~waterInvoice();
 
@@ -21,11 +37,16 @@ public:
     /*************************/
 
     /********* waterInvoice Dialog ***********/
+    QList<QString> getData();
     void getDataRecord(QList<QString> *textDate , QList<double> *doubleDate , QList<int> *intData);
     //Actions
     void actionUIChangesForRegister();
     void actionUIChangesForEdit();
+    void actionSetInvoiceMonthAndtValues();
+    void actionSetMonyValue();
     void actionAddWaterInvoiceRecord();
+    void actionDeleteWaterInvoiceRecord();
+
     /*****************************************/
 
 
@@ -36,6 +57,14 @@ private slots:
     void on_buttonExit_clicked();
     void on_radioEditInvoice_clicked();
     void on_buttonSave_clicked();
+    void on_buttonDelete_clicked();
+    void on_comboBoxEstate_currentIndexChanged(int index);
+
+
+
+    void on_comboBoxMonth_activated(int index);
+
+    void on_spinBoxYear_valueChanged(int arg1);
 
 private:
     Ui::waterInvoice *ui;

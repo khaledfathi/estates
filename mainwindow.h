@@ -109,6 +109,9 @@ private slots:
     //*** SIGNAL AND SLOT for Recipet Tab***
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
 
+    //*** For Testing ***
+public slots:
+    void clearEstatesFields();
 
 private:
     Ui::MainWindow *ui;

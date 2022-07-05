@@ -5,6 +5,7 @@
 #include <QSqlQueryModel>
 #include <QTreeView>
 #include <QComboBox>
+#include <QDoubleSpinBox>
 
 class database
 {
@@ -39,6 +40,10 @@ public:
 
     /***** Water Invoce Records*****/
     void waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData);
+    bool checkDuplicatedInvoice(QString estate ,  QString month , QString year);
+    void setRegisterdMonthList (QString estate , QString year , QComboBox *monthComboList);
+    void waterInvoiceDeleteRecord (QString month , QString year);
+    void setMoneyValue (QString estate, QString  month , QString year , QDoubleSpinBox *moneyValue);
     /*******************************/
 
      //**** TEST ****

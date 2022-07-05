@@ -3,6 +3,7 @@
 #include <QSqlRecord>
 #include <QMessageBox>
 
+
 database::database(QString filePath)
 {
     databaseFile = filePath;
@@ -294,6 +295,99 @@ void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubl
                 QString::number(intData[2]),\
                 QString::number(doubleDate[0]));
     db.exec(sql);
+    db.close();
+}
+
+bool database::checkDuplicatedInvoice(QString estate , QString month , QString year)
+{
+    //get estatesID from estates Name
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates where estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID= qryEstateID.record().value(0).toString();
+    db.close();
+
+    db.open();
+    QSqlQuery qry(db);
+    qry.exec(QString("SELECT water_invoice.ID FROM water_invoice WHERE water_invoice.estatesID=%1 and water_invoice.عن_شهر='%2' and water_invoice.سنة=%3").arg(estateID , month , year));
+    qry.next();
+    int found = qry.record().value(0).toInt();
+    if (found){
+        return true;
+    }
+    db.close();
+    return false;
+}
+void database::setRegisterdMonthList (QString estate , QString year , QComboBox  *monthComboList)
+{
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    db.open();
+    QSqlQuery qry(db) ;
+    qry.exec(QString("SELECT water_invoice.عن_شهر FROM water_invoice WHERE estatesID=%1 and سنة=%2").arg(estateID,year));
+    QList<QString> monthsRecoeded;
+    while(qry.next()){
+        monthsRecoeded.push_back(qry.record().value(0).toString());
+    }
+    db.close();
+
+    //make monthes name in order after get results from database
+    QList<QString> months ={\
+        "1- يناير",\
+        "2- فبراير",\
+        "3- مارس",\
+        "4- ابريل",\
+        "5- مايو",\
+        "6- يونيو",\
+        "7- يوليو",\
+        "8- اغسطس",\
+        "9- سبتمبر",\
+        "10- اكتوبر",\
+        "11- نوفمبر",\
+        "12- ديسمبر",\
+    };
+    QList<QString> monthsRecoededInOrder;
+    for (int i=0; i<months.size(); i++){
+        for (int j=0; j< monthsRecoeded.size(); j++){
+            if (months[i] == monthsRecoeded[j]){
+                monthsRecoededInOrder.push_back(months[i]);
+                break;
+            }
+        }
+    }
+    monthComboList->addItems(monthsRecoededInOrder);
+}
+void database::waterInvoiceDeleteRecord (QString month , QString year)
+{
+    db.open();
+    QSqlQuery qry(db);
+    qry.exec(QString("DELETE FROM water_invoice WHERE عن_شهر='%1' and سنة=%2").arg(month, year));
+    db.close();
+}
+void database::setMoneyValue (QString estate, QString  month , QString year , QDoubleSpinBox *moneyValue )
+{
+    //get estateID
+    db.open();
+    QSqlQuery qryEstateID (db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //set money value
+    db.open();
+    QSqlQuery qry(db) ;
+    qry.exec(QString("SELECT water_invoice.قيمة_الفاتورة FROM water_invoice WHERE estatesID=%1 and عن_شهر='%2' and سنة=%3").arg(estateID, month, year));
+    qry.next();
+    double x = qry.record().value(0).toDouble();
+    moneyValue->setValue(x);
+
     db.close();
 }
 /*******************************/

@@ -12,7 +12,7 @@ class queryResult : public QDialog
     Q_OBJECT
 
 public:
-    explicit queryResult(QWidget *parent = nullptr);
+    explicit queryResult(QWidget *parent = nullptr);   
     ~queryResult();
     void showData();
     void deleteAll();

@@ -51,5 +51,6 @@ void queryResult::on_buttonExit_clicked()
 void queryResult::on_buttonDeleteAll_clicked()
 {
     deleteAll();
+
 }
 

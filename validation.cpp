@@ -7,6 +7,7 @@ validation::validation()
 {
 
 }
+/*********General************/
 bool validation::isNumberWithSpaces(QString stringNumbers)
 {
     QRegExp re("\\d*");
@@ -18,7 +19,9 @@ bool validation::isNumberWithSpaces(QString stringNumbers)
     }
     return re.exactMatch(lineWithNoSpaces);
 }
+/***************************/
 
+/*********Estate Validation************/
 QString validation::estatesValidation(QList<QString> data)
 {
     QString message ="";
@@ -40,7 +43,9 @@ QString validation::estatesValidation(QList<QString> data)
     return message;
 }
 
+/**************************************/
 
+/*********Renter Validation************/
 QString validation::renterValidation(QList<QString> data)
 {
     QString message ="";
@@ -48,7 +53,7 @@ QString validation::renterValidation(QList<QString> data)
         message+= "سجل عقار اولاً\n";
     }
     if (data[2].isEmpty()|| data[2] == "0"){
-        message += "رقم الشقة لايمكن ان يكون صفر\n";
+        message += "رقم الوحدة لايمكن ان يكون صفر\n";
     }
     if (data[3].isEmpty()){
         message += "اسم المستأجر (اجبارى)\n";
@@ -73,6 +78,9 @@ QString validation::renterValidation(QList<QString> data)
     return message;
 }
 
+/***************************************/
+
+/*********Money Validation************/
 QString validation::moneyValidation(QList<QString> data)
 {
     QString message ="";
@@ -87,3 +95,21 @@ QString validation::moneyValidation(QList<QString> data)
     }
     return message;
 }
+/*************************************/
+
+/*********Water Invoice Validation************/
+QString validation::waterInvoiceValidation(QList<QString> data)
+{
+    QString message = "" ;
+    if (data[0].isEmpty()){
+        message += "سجل عقار أولاً\n";
+    }
+    if (data[1] == "0"){
+        message += "المبلغ المدفوع لا يمكن ان يكون صفر\n";
+    }
+    if (data[2].isEmpty()){
+        message+= "لا توجد فواتير متاحة لسنة " + data[3] + "\n";
+    }
+    return message;
+}
+/*********************************************/
