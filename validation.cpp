@@ -87,7 +87,7 @@ QString validation::moneyValidation(QList<QString> data)
     if (data[0].isEmpty()){
         message += "سجل عقار أولاً\n";
     }
-    if (data[1].isEmpty()){
+    if (data[1].isEmpty() && !(data[8].toInt())){
         message += "سجل مستأجر أولاً\n";
     }
     if (data[3].toFloat() == 0){

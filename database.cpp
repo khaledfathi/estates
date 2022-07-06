@@ -27,7 +27,7 @@ database::database(QString filePath)
 database::~database(){
     db.removeDatabase("QSQLITE");
 }
-bool database::createDatebaseTabels()
+void database::createDatebaseTabels()
 {
     db.open();
     db.exec(\
@@ -68,9 +68,9 @@ bool database::createDatebaseTabels()
                     \"rentersID\"	INTEGER ,\
                     \"تاريخ_العملية\"	TEXT NOT NULL,\
                     \"المبلغ_المدفوع\"	REAL NOT NULL,\
-                    \"نوع_المعاملة\"	TEXT NOT NULL,\
-                    \"عن_شهر\"	TEXT NOT NULL,\
-                    \"سنة\"	INTEGER NOT NULL,\
+                    \"نوع_المعاملة\"	TEXT,\
+                    \"عن_شهر\"	TEXT,\
+                    \"سنة\"	INTEGER ,\
                     \"تفاصيل_اخرى\"	TEXT,\
                     PRIMARY KEY(\"ID\" AUTOINCREMENT),\
                     FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\"),\
@@ -90,7 +90,6 @@ bool database::createDatebaseTabels()
             );
     db.commit();
     db.close();
-    return true;
 }
 
 bool database::isDatabaseWork()
@@ -285,7 +284,6 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 
 
 /********Money Records********/
-
 void database::MoneyRecord (QList<QString> textData , QList<double> doubleData , QList<int> intData)
 {
     //get estateID from estates table
@@ -337,6 +335,43 @@ void database::MoneyRecord (QList<QString> textData , QList<double> doubleData ,
         textData[3],\
         textData[4],\
         QString::number(intData[3]),\
+        textData[5]);
+    db.exec(sql);
+    db.commit();
+    db.close();
+}
+
+void database::MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData)
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textData[0]));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //do record
+    double moneyValue = doubleData[0]; // money value
+    if (intData[2]){ //radio button withdraw
+         moneyValue *= -1;
+    }
+
+    db.open();
+    QString sql = "INSERT INTO money (\
+        estatesID,\
+        تاريخ_العملية,\
+        المبلغ_المدفوع,\
+        تفاصيل_اخرى)\
+        VALUES(\
+        %1,\
+        '%2',\
+        %3,\
+        '%4')";
+    sql = sql.arg(\
+        estateID,\
+        textData[2],\
+        QString::number(moneyValue),\
         textData[5]);
     db.exec(sql);
     db.commit();

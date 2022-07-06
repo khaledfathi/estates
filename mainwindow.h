@@ -115,7 +115,6 @@ private slots:
 
     //*** For Testing ***
 
-
 public slots:
     void clearEstatesFields();
 

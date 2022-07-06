@@ -12,14 +12,15 @@ class database
 private:
     QString databaseFile;  
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    bool createDatebaseTabels();
+    void createDatebaseTabels();
 
 public:
     static QList<QString> months ;
     database(QString filePath);
     ~database();
-    bool isDatabaseWork();
+
     /******* General *********/
+    bool isDatabaseWork();
     void estatesList (QComboBox *estateList);
     void rentersList (QComboBox *rentersList , QString estate);
     /*************************/
@@ -37,6 +38,7 @@ public:
 
     /*****Money Records*****/
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
+    void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     /************************/
 
     /***** Water Invoce Records*****/

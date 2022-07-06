@@ -236,6 +236,7 @@ void MainWindow::defaultMoneyTabUI()
 {
     //default UI form for 'Money Tab'
     setMoneyTabFieldsStatus(false);
+    ui->comboBoxMonyMonth->addItems(database::months);
 }
 
 void MainWindow::setMoneyTabFieldsStatus(bool state)
@@ -263,6 +264,7 @@ QList<QString> MainWindow::getDataMoney()
     data.push_back(ui->comboBoxMonyMonth->currentText());
     data.push_back(QString::number(ui->spinBoxMoneyYear->value()));
     data.push_back(ui->textEditMoneyNotes->toPlainText());
+    data.push_back(QString::number(ui->checkBoxAddFreeMoney->isChecked()));
     return data;
 }
 void MainWindow::getMoneyRecord(QList<QString> *textData , QList<double> *doubleData , QList<int> *intData)
@@ -326,13 +328,11 @@ void MainWindow::actionMoneyTypeListChanges()
 {
     if (ui->comboBoxMoneyType->currentText() == "غير مصنف" || ui->comboBoxMoneyType->currentText() == "سداد اعمال صيانة / طوارئ"){
         ui->comboBoxMonyMonth->setDisabled(true);
-        ui->spinBoxMoneyYear->setDisabled(true);
+        ui->spinBoxMoneyYear->setDisabled(true);       
     }else if (ui->comboBoxMoneyType->currentText()=="سداد مياة"){
         ui->comboBoxMonyMonth->setDisabled(false);
         ui->spinBoxMoneyYear->setDisabled(false);
-        ui->comboBoxMonyMonth->clear();
-        database db(databaseFilePath);
-        db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+        actionSetMonthsDependOnYear();
     }else{
         ui->comboBoxMonyMonth->setDisabled(false);
         ui->spinBoxMoneyYear->setDisabled(false);
@@ -343,37 +343,47 @@ void MainWindow::actionMoneyTypeListChanges()
 
 void MainWindow::actionSetMonthsDependOnYear()
 {
-    ui->comboBoxMonyMonth->clear();
-    database db(databaseFilePath);
-    db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+    if (ui->comboBoxMoneyType->currentText()== "سداد مياة"){
+        ui->comboBoxMonyMonth->clear();
+        database db(databaseFilePath);
+        db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+    }
 }
 
 void MainWindow::actionaAddMoneyRecord()
 {
-    QList<QString> textDate;
-    QList<double> doubleDate;
-    QList<int> intDate;
-    getMoneyRecord(&textDate, &doubleDate , &intDate);
-    database db(databaseFilePath);
-    if (ui->checkBoxAddFreeMoney->isChecked()){ //Record [without] classification
+    //actionValidationMoney();
+    validation valid ;
+    QString message = valid.moneyValidation(getDataMoney());
+    if (!message.isEmpty()){
+        QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
+    }else{
+        QList<QString> textDate;
+        QList<double> doubleDate;
+        QList<int> intDate;
+        getMoneyRecord(&textDate, &doubleDate , &intDate);
+        database db(databaseFilePath);
+        if (ui->checkBoxAddFreeMoney->isChecked()){ //Record [without] classification
+            db.MoneyRecordUnclassified(textDate , doubleDate , intDate);
+            QMessageBox::information(this,"حالة العملية", "تم الحفظ");
+        }else { //Record [with] classification
+            int opreationType= ui->comboBoxMoneyType->currentIndex();
+            switch (opreationType){
+            case 0 : //rent
 
-    }else { //Record [with] classification
-        int opreationType= ui->comboBoxMoneyType->currentIndex();
-        switch (opreationType){
-        case 0 : //rent
+                break;
+            case 1 : // water
 
-            break;
-        case 1 : // water
+                break;
+            case 2 : // maintenance
 
-            break;
-        case 2 : // maintenance
+                break;
+            case 3 : //unclassiified
 
-            break;
-        case 3 : //unclassiified
-
-            break;
+                break;
+            }
+            db.MoneyRecord(textDate , doubleDate , intDate);
         }
-        db.MoneyRecord(textDate , doubleDate , intDate);
     }
 }
 
@@ -389,8 +399,7 @@ void MainWindow::on_buttonMoneyEmpty_clicked()
 }
 
 void MainWindow::on_buttonMoneySave_clicked()
-{
-    actionValidationMoney();
+{    
     actionaAddMoneyRecord();
 }
 

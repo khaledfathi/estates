@@ -143,6 +143,10 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
     if (ui->comboBoxEstate->currentText().isEmpty()){
         QMessageBox::warning(this,"حالة العملية", "لا توجد فواتير للحذف");
     }else {
+        if(ui->comboBoxMonth->currentText().isEmpty()) {
+            QMessageBox::warning(this,"حالة العملية", "لا توجد فاتورة للحذف");
+            return ;
+        }
         database db(databaseFilePath);
         db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
 

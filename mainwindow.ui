@@ -107,7 +107,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>1</number>
         </property>
         <property name="iconSize">
          <size>
@@ -1055,66 +1055,6 @@
                  <height>30</height>
                 </size>
                </property>
-               <item>
-                <property name="text">
-                 <string>1- يناير</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>2- فبراير</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>3- مارس</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>4- ابريل</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>5- مايو</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>6- يونيو</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>7- يوليو</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>8- اغسطس</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>9- سبتمبر</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>10- اكتوبر</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>11- نوفمبر</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>12- ديسمبر</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item row="0" column="3">

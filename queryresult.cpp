@@ -38,6 +38,7 @@ void queryResult::deleteAll()
     db.open();
     db.exec("DELETE FROM renters");
     db.exec("DELETE FROM estates");
+    db.exec("DELETE FROM money");
     db.exec("DELETE FROM water_invoice");
     db.commit();
     db.close();
