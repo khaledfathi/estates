@@ -70,6 +70,7 @@ void waterInvoice::actionUIChangesForRegister()
     ui->buttonSave->setText("حفظ");
     this->setStyleSheet("");    
     ui->comboBoxMonth->clear();
+    ui->doubleSpinBoxInvoceValue->setValue(0);
     ui->comboBoxMonth->addItems(months);
     ui->spinBoxYear->setValue(QDate::currentDate().year());
 }
@@ -93,7 +94,6 @@ void waterInvoice::actionUIChangesForEdit()
 {
     ui->buttonDelete->setHidden(false);
     ui->buttonSave->setText("تعديل");
-    this->setStyleSheet("background:#48d6e0;");
     ui->spinBoxYear->setValue(QDate::currentDate().year());
     ui->comboBoxMonth->clear();
     actionSetInvoiceMonthAndtValues();
@@ -130,7 +130,8 @@ void waterInvoice::actionAddWaterInvoiceRecord()
             }
         }else if (ui->radioEditInvoice->isChecked()){
             //For Water Invoice  Edit
-
+            db.waterInvoiceEditRecord(textData , doubleData , intData);
+            QMessageBox::information(this , "حالة العملية", "تم التعديل");
 
         }
 
@@ -155,12 +156,11 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
         confirm.button(QMessageBox::No)->setText("الغاء");
         if (confirm.exec() == QMessageBox::Yes){
             QMessageBox::information(this,"حالة العملية", "تم الحذف");
+            ui->comboBoxMonth->clear();
+            db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);
+            db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->doubleSpinBoxInvoceValue);
         }
-        ui->comboBoxMonth->clear();
-        db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);
-        db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->doubleSpinBoxInvoceValue);
     }
-
 }
 
 //*** SIGNAL AND SLOT for WaterInvoice Dialog***

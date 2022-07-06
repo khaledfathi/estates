@@ -93,6 +93,9 @@ QString validation::moneyValidation(QList<QString> data)
     if (data[3].toFloat() == 0){
         message += "المبلغ المدفوع لا يمكن ان يكون صفر\n";
     }
+    if (data[5].isEmpty()){
+        message += "لا توجد فواتير مستحقة الدفع لهذا العام\n";
+    }
     return message;
 }
 /*************************************/

@@ -15,6 +15,7 @@ private:
     bool createDatebaseTabels();
 
 public:
+    static QList<QString> months ;
     database(QString filePath);
     ~database();
     bool isDatabaseWork();
@@ -40,6 +41,7 @@ public:
 
     /***** Water Invoce Records*****/
     void waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData);
+    void waterInvoiceEditRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData);
     bool checkDuplicatedInvoice(QString estate ,  QString month , QString year);
     void setRegisterdMonthList (QString estate , QString year , QComboBox *monthComboList);
     void waterInvoiceDeleteRecord (QString month , QString year);

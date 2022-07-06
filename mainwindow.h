@@ -14,7 +14,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    /************* General ***************/
+    /************* General ***************/    
     void defaultSetupUI();
     void setCurrentDateUI();
     /*************************************/
@@ -50,6 +50,8 @@ public:
     void actionButtonMoneyEmpty();
     void actionValidationMoney();
     void actionShowWaterInvoiceDialog();
+    void actionMoneyTypeListChanges();
+    void actionSetMonthsDependOnYear();
     void actionaAddMoneyRecord();
     /***********************************************/
 
@@ -95,6 +97,8 @@ private slots:
     void on_buttonMoneySave_clicked();
     void on_buttonMoneyWaterInvoice_clicked();
     void on_comboBoxMoneyEstate_currentIndexChanged(int index);
+    void on_comboBoxMoneyType_currentIndexChanged(int index);
+    void on_spinBoxMoneyYear_valueChanged(int arg1);
 
 
     //*** SIGNAL AND SLOT for Renter Tab***
@@ -110,6 +114,8 @@ private slots:
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
 
     //*** For Testing ***
+
+
 public slots:
     void clearEstatesFields();
 

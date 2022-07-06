@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);    
     this->setWindowIcon(QIcon(":/icon/icon/app_icon.ico"));
-    defaultSetupUI();
+    defaultSetupUI();    
 }
 
 MainWindow::~MainWindow()
@@ -203,6 +203,7 @@ void MainWindow::actioncheckBoxQueryRenterChanged(int status)
 void MainWindow::actionShowQueryResult()
 {
     queryResult *res = new queryResult (this) ;
+    res->setModal(true);
     res->showData();
     res->show();
 }
@@ -259,7 +260,7 @@ QList<QString> MainWindow::getDataMoney()
     data.push_back(ui->dateEditMoneyDate->date().toString("yyyy/M/d"));
     data.push_back(QString::number(ui->doubleSpinBoxMony->value()));
     data.push_back(ui->comboBoxMoneyType->currentText());
-    data.push_back(QString::number(ui->comboBoxMonyMonth->currentIndex()+1));
+    data.push_back(ui->comboBoxMonyMonth->currentText());
     data.push_back(QString::number(ui->spinBoxMoneyYear->value()));
     data.push_back(ui->textEditMoneyNotes->toPlainText());
     return data;
@@ -318,14 +319,62 @@ void MainWindow::actionValidationMoney()
 void MainWindow::actionShowWaterInvoiceDialog()
 {
     waterInvoice *waterInvoiceDialog = new waterInvoice(this);
+    waterInvoiceDialog->setModal(true);
     waterInvoiceDialog->show();
 }
+void MainWindow::actionMoneyTypeListChanges()
+{
+    if (ui->comboBoxMoneyType->currentText() == "غير مصنف" || ui->comboBoxMoneyType->currentText() == "سداد اعمال صيانة / طوارئ"){
+        ui->comboBoxMonyMonth->setDisabled(true);
+        ui->spinBoxMoneyYear->setDisabled(true);
+    }else if (ui->comboBoxMoneyType->currentText()=="سداد مياة"){
+        ui->comboBoxMonyMonth->setDisabled(false);
+        ui->spinBoxMoneyYear->setDisabled(false);
+        ui->comboBoxMonyMonth->clear();
+        database db(databaseFilePath);
+        db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+    }else{
+        ui->comboBoxMonyMonth->setDisabled(false);
+        ui->spinBoxMoneyYear->setDisabled(false);
+        ui->comboBoxMonyMonth->clear();
+        ui->comboBoxMonyMonth->addItems(database::months);
+    }
+}
+
+void MainWindow::actionSetMonthsDependOnYear()
+{
+    ui->comboBoxMonyMonth->clear();
+    database db(databaseFilePath);
+    db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+}
+
 void MainWindow::actionaAddMoneyRecord()
 {
     QList<QString> textDate;
     QList<double> doubleDate;
     QList<int> intDate;
     getMoneyRecord(&textDate, &doubleDate , &intDate);
+    database db(databaseFilePath);
+    if (ui->checkBoxAddFreeMoney->isChecked()){ //Record [without] classification
+
+    }else { //Record [with] classification
+        int opreationType= ui->comboBoxMoneyType->currentIndex();
+        switch (opreationType){
+        case 0 : //rent
+
+            break;
+        case 1 : // water
+
+            break;
+        case 2 : // maintenance
+
+            break;
+        case 3 : //unclassiified
+
+            break;
+        }
+        db.MoneyRecord(textDate , doubleDate , intDate);
+    }
 }
 
 //*** SIGNAL AND SLOT for money Tab***
@@ -342,6 +391,7 @@ void MainWindow::on_buttonMoneyEmpty_clicked()
 void MainWindow::on_buttonMoneySave_clicked()
 {
     actionValidationMoney();
+    actionaAddMoneyRecord();
 }
 
 void MainWindow::on_buttonMoneyWaterInvoice_clicked()
@@ -352,6 +402,16 @@ void MainWindow::on_buttonMoneyWaterInvoice_clicked()
 void MainWindow::on_comboBoxMoneyEstate_currentIndexChanged(int index)
 {
     actionRentersFiledsFromDatabase("MONEY");
+}
+
+void MainWindow::on_comboBoxMoneyType_currentIndexChanged(int index)
+{
+    actionMoneyTypeListChanges();
+}
+
+void MainWindow::on_spinBoxMoneyYear_valueChanged(int arg1)
+{
+    actionSetMonthsDependOnYear();
 }
 
 /***********************************************/
@@ -375,6 +435,7 @@ QList<QString> MainWindow::getDateRenter()
     data.push_back(ui->dateEditContract->date().toString("yyyy/M/d"));
     data.push_back(ui->dateEditContractEnd->date().toString("yyyy/M/d"));
     data.push_back(ui->comboBoxContractType->currentText());
+    data.push_back(QString::number(ui->spinBoxRenterPercent->value()));
     return data;
 }
 
@@ -391,6 +452,7 @@ void MainWindow::getRenterRecord(QList<QString> *textData , QList<int> *digitDat
 
     digitData->push_back(ui->spinBoxRenterUnitNumber->value());
     digitData->push_back(ui->spinBoxRenterMoneyValue->value());
+    digitData->push_back(ui->spinBoxRenterPercent->value());
 }
 
 //*** Actions for Renter Tab ***
@@ -431,6 +493,7 @@ void MainWindow::actionaAddRenterRecord()
                 database db(databaseFilePath);
                 db.RenterRecord(textData , digitData);
                 QMessageBox::information(this,"حالة العملية", "تم الحفظ");
+                actionButtonRenterEmpty();
             }
         }
     }
@@ -440,9 +503,10 @@ void MainWindow::actionApartmentTypeChanges()
 {
     if ( ui->comboBoxApartmentType->currentText() == "شقة" ){
         ui->labelUnitNumber->setText("رقم الوحدة (شقة)");
-
+        ui->spinBoxRenterPercent->setValue(100);
     }else if ( ui->comboBoxApartmentType->currentText() == "محل" ){
         ui->labelUnitNumber->setText("رقم الوحدة (محل)");
+        ui->spinBoxRenterPercent->setValue(200);
     }
 }
 //*** SIGNAL AND SLOT for Renter Tab***
@@ -564,3 +628,7 @@ void MainWindow::clearEstatesFields()
 {
     defaultSetupUI();
 }
+
+
+
+

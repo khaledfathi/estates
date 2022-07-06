@@ -3,6 +3,20 @@
 #include <QSqlRecord>
 #include <QMessageBox>
 
+QList<QString> database::months ={\
+    "1- يناير",\
+    "2- فبراير",\
+    "3- مارس",\
+    "4- ابريل",\
+    "5- مايو",\
+    "6- يونيو",\
+    "7- يوليو",\
+    "8- اغسطس",\
+    "9- سبتمبر",\
+    "10- اكتوبر",\
+    "11- نوفمبر",\
+    "12- ديسمبر",\
+};
 
 database::database(QString filePath)
 {
@@ -42,6 +56,7 @@ bool database::createDatebaseTabels()
                         \"تاريخ_العقد\"   TEXT NOT NULL,\
                         \"تاريخ_انتهاء_العقد\" TEXT NOT NULL,\
                         \"نوع_العقد\"     TEXT NOT NULL,\
+                        \"نسبة_مئوية_للمياة\" INTEGER NOT NULL,\
                         PRIMARY KEY(\"ID\" AUTOINCREMENT),\
                         FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\")\
                 );"\
@@ -50,12 +65,13 @@ bool database::createDatebaseTabels()
                 "CREATE TABLE IF NOT EXISTS \"money\" (\
                     \"ID\"	INTEGER NOT NULL UNIQUE,\
                     \"estatesID\"	INTEGER  NOT NULL,\
-                    \"rentersID\"	INTEGER  NOT NULL,\
+                    \"rentersID\"	INTEGER ,\
                     \"تاريخ_العملية\"	TEXT NOT NULL,\
                     \"المبلغ_المدفوع\"	REAL NOT NULL,\
                     \"نوع_المعاملة\"	TEXT NOT NULL,\
+                    \"عن_شهر\"	TEXT NOT NULL,\
                     \"سنة\"	INTEGER NOT NULL,\
-                    \"تفاصيل_اخرى\"	INTEGER,\
+                    \"تفاصيل_اخرى\"	TEXT,\
                     PRIMARY KEY(\"ID\" AUTOINCREMENT),\
                     FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\"),\
                     FOREIGN KEY (\"rentersID\") REFERENCES renters(\"ID\")\
@@ -182,8 +198,9 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
             قيمة_الايجار,\
             تاريخ_العقد,\
             تاريخ_انتهاء_العقد,\
-            نوع_العقد\
-            )VALUES(%1,%2,'%3','%4','%5','%6',%7,'%8','%9','%10')";
+            نوع_العقد,\
+            نسبة_مئوية_للمياة\
+            )VALUES(%1,%2,'%3','%4','%5','%6',%7,'%8','%9','%10',%11)";
     sql = sql.arg(estatesID,\
             QString::number(digitData[0]),\
             textData[1],\
@@ -193,7 +210,8 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
             QString::number(digitData[1]),\
             textData[5],\
             textData[6],\
-            textData[7]);
+            textData[7],\
+            QString::number(digitData[2]));
     db.exec(sql);
 
     db.commit();
@@ -235,8 +253,9 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
     qryID.exec(QString("SELECT estates.ID FROM estates Where estates.اسم_رمزى_للعقار='%1'").arg(estate));
     qryID.next();
     int ID = qryID.value(0).toInt();
-    db.open();
+    db.close();
 
+    db.open();
     QString sql = QString("SELECT renters.رقم_الوحدة FROM estates , renters WHERE renters.estatesID=%1 and renters.نوع_العين_المؤجرة='%2' and renters.رقم_الوحدة=%3").arg(QString::number(ID),unitType,QString::number(unitNumber)) ;
     QSqlQuery qry;
 
@@ -269,7 +288,59 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 
 void database::MoneyRecord (QList<QString> textData , QList<double> doubleData , QList<int> intData)
 {
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textData[0]));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
 
+    //get renterID from rentertable
+    db.open();
+    QSqlQuery qryRenterID(db);
+    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(textData[1]));
+    qryRenterID.next();
+    QString RenterID= qryRenterID.record().value(0).toString();
+    db.close();
+
+    //do record
+    double moneyValue = doubleData[0]; // money value
+    if (intData[2]){ //radio button withdraw
+         moneyValue *= -1;
+    }
+
+    db.open();
+    QString sql = "INSERT INTO money (\
+        estatesID,\
+        rentersID,\
+        تاريخ_العملية,\
+        المبلغ_المدفوع,\
+        نوع_المعاملة,\
+        عن_شهر,\
+        سنة,\
+        تفاصيل_اخرى)\
+        VALUES(\
+        %1,\
+        %2,\
+        '%3',\
+        %4,\
+        '%5',\
+        '%6',\
+        %7,\
+        '%8')";
+    sql = sql.arg(\
+        estateID,\
+        RenterID,\
+        textData[2],\
+        QString::number(moneyValue),\
+        textData[3],\
+        textData[4],\
+        QString::number(intData[3]),\
+        textData[5]);
+    db.exec(sql);
+    db.commit();
+    db.close();
 }
 /****************************/
 
@@ -297,7 +368,24 @@ void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubl
     db.exec(sql);
     db.close();
 }
+void database::waterInvoiceEditRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData)
+{
+    //get estate id
+    db.open();
+    QSqlQuery qryEstateID(db) ;
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textDate[0]));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
 
+    //aletr data
+    db.open();
+    QSqlQuery qry(db) ;
+    qry.exec(QString("UPDATE water_invoice SET قيمة_الفاتورة=%1 WHERE estatesID=%2 and عن_شهر='%3' and سنة=%4").arg\
+             (QString::number(doubleDate[0]),estateID,textDate[1],QString::number(intData[2])));
+    db.close();
+
+}
 bool database::checkDuplicatedInvoice(QString estate , QString month , QString year)
 {
     //get estatesID from estates Name
@@ -338,20 +426,7 @@ void database::setRegisterdMonthList (QString estate , QString year , QComboBox 
     db.close();
 
     //make monthes name in order after get results from database
-    QList<QString> months ={\
-        "1- يناير",\
-        "2- فبراير",\
-        "3- مارس",\
-        "4- ابريل",\
-        "5- مايو",\
-        "6- يونيو",\
-        "7- يوليو",\
-        "8- اغسطس",\
-        "9- سبتمبر",\
-        "10- اكتوبر",\
-        "11- نوفمبر",\
-        "12- ديسمبر",\
-    };
+
     QList<QString> monthsRecoededInOrder;
     for (int i=0; i<months.size(); i++){
         for (int j=0; j< monthsRecoeded.size(); j++){
