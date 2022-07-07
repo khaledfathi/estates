@@ -10,13 +10,15 @@
 extern QString databaseFilePath;
 #endif
 
-waterInvoice::waterInvoice(QWidget *parent) :
+waterInvoice::waterInvoice(QWidget *parent , QComboBox *renterName) :
     QDialog(parent),
     ui(new Ui::waterInvoice)
 {
     ui->setupUi(this);
     defaultUI();
     setEstateField();
+    connect(ui->buttonSave , SIGNAL(clicked()) , parent , SLOT(updataMoneyMonthList()));
+    connect(ui->buttonDelete, SIGNAL(clicked()) , parent , SLOT(updataMoneyMonthList()));
 }
 
 waterInvoice::~waterInvoice()
@@ -54,7 +56,7 @@ void waterInvoice::getDataRecord(QList<QString> *textDate , QList<double> *doubl
 {
     //text data
     textDate->push_back(ui->comboBoxEstate->currentText());
-    textDate->push_back(ui->comboBoxMonth->currentText());
+    textDate->push_back(ui->comboBoxMonth->currentText());   
     //double data
     doubleDate->push_back(ui->doubleSpinBoxInvoceValue->value());
     //int data
@@ -125,17 +127,18 @@ void waterInvoice::actionAddWaterInvoiceRecord()
                 QMessageBox::warning(this , "خطأ فى البيانات المسجلة" , message);
             }else{
                 db.waterInvoiceRecord(textData , doubleData , intData);
+                db.calculationForRenterWaterInvoiceValue(estate , month , ui->spinBoxYear->value());
                 QMessageBox::information(this , "حالة العملية" , "تم الحفظ");
                 ui->doubleSpinBoxInvoceValue->setValue(0);
             }
         }else if (ui->radioEditInvoice->isChecked()){
             //For Water Invoice  Edit
             db.waterInvoiceEditRecord(textData , doubleData , intData);
+            db.deleteWaterInvoiceValues(estate ,month , ui->spinBoxYear->value());
+            db.calculationForRenterWaterInvoiceValue(estate , month , ui->spinBoxYear->value());
             QMessageBox::information(this , "حالة العملية", "تم التعديل");
 
         }
-
-
     }
 }
 void waterInvoice::actionDeleteWaterInvoiceRecord()
@@ -146,10 +149,7 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
         if(ui->comboBoxMonth->currentText().isEmpty()) {
             QMessageBox::warning(this,"حالة العملية", "لا توجد فاتورة للحذف");
             return ;
-        }
-        database db(databaseFilePath);
-        db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
-
+        }        
         QMessageBox confirm(this) ;
         confirm.setWindowTitle("حالة العملية");
         confirm.setText("تأكيد الحذف !");
@@ -159,6 +159,10 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
         confirm.button(QMessageBox::Yes)->setText("موافق");
         confirm.button(QMessageBox::No)->setText("الغاء");
         if (confirm.exec() == QMessageBox::Yes){
+            database db(databaseFilePath);
+            db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
+
+            db.deleteWaterInvoiceValues(ui->comboBoxEstate->currentText() ,ui->comboBoxMonth->currentText(), ui->spinBoxYear->value());
             QMessageBox::information(this,"حالة العملية", "تم الحذف");
             ui->comboBoxMonth->clear();
             db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);
@@ -184,7 +188,7 @@ void waterInvoice::on_buttonExit_clicked()
 
 void waterInvoice::on_buttonSave_clicked()
 {
-    actionAddWaterInvoiceRecord();
+    actionAddWaterInvoiceRecord();    
 }
 
 void waterInvoice::on_buttonDelete_clicked()

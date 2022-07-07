@@ -19,25 +19,35 @@
   <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0" colspan="4">
     <layout class="QGridLayout" name="gridLayout">
-     <item row="3" column="0">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>جدول العقارات</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="2">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>جدول المعاملات المالية</string>
        </property>
       </widget>
      </item>
+     <item row="1" column="1">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>جدول المستأجرين</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QTreeView" name="treeViewResults2"/>
+     </item>
      <item row="2" column="0">
       <widget class="QTreeView" name="treeViewResults"/>
      </item>
      <item row="4" column="0">
-      <widget class="QTreeView" name="treeViewResult3"/>
-     </item>
-     <item row="3" column="1">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>جدول فاتورة المياة</string>
-       </property>
-      </widget>
+      <widget class="QTreeView" name="treeVResult4"/>
      </item>
      <item row="0" column="0">
       <widget class="QLabel" name="label">
@@ -58,23 +68,27 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
-      <widget class="QTreeView" name="treeVResult4"/>
+     <item row="2" column="2">
+      <widget class="QTreeView" name="treeViewResult3"/>
      </item>
-     <item row="2" column="1">
-      <widget class="QTreeView" name="treeViewResults2"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label_3">
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>جدول العقارات</string>
+        <string>جدول فاتورة المياة</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <widget class="QLabel" name="label_2">
+     <item row="3" column="1">
+      <widget class="QLabel" name="label_6">
        <property name="text">
-        <string>جدول المستأجرين</string>
+        <string>جدول قيم تقسيم المياة على المستأجرين</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" colspan="2">
+      <widget class="QTreeView" name="treeVResult5">
+       <property name="allColumnsShowFocus">
+        <bool>false</bool>
        </property>
       </widget>
      </item>

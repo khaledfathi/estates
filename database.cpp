@@ -88,6 +88,20 @@ void database::createDatebaseTabels()
                     FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\")\
                 );"\
             );
+    db.exec(\
+                "CREATE TABLE IF NOT EXISTS \"water_invoice_values\" (\
+                    \"ID\"	INTEGER NOT NULL UNIQUE,\
+                    \"estatesID\"	INTEGER NOT NULL ,\
+                    \"rentersID\" 	INTEGER NOT NULL ,\
+                    \"عن_شهر\"	TEXT NOT NULL,\
+                    \"سنة\"	INTEGER NOT NULL,\
+                    \"المبلغ_المطلوب\" REAL NOT NULL,\
+                    \"نسبة_مئوية\" INTEGER NOT NULL,\
+                    PRIMARY KEY(\"ID\" AUTOINCREMENT),\
+                    FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\"),\
+                    FOREIGN KEY (\"rentersID\") REFERENCES renters(\"ID\")\
+                );"\
+            );
     db.commit();
     db.close();
 }
@@ -377,8 +391,7 @@ void database::MoneyRecordUnclassified (QList<QString> textData , QList<double> 
     db.commit();
     db.close();
 }
-
-double database::getRenterWaterInvoiceValue (QString estate , QString renter , QString month , int year)
+void database::deleteWaterInvoiceValues(QString estate , QString month , int year)
 {
     //get estateID from estates table
     db.open();
@@ -388,12 +401,23 @@ double database::getRenterWaterInvoiceValue (QString estate , QString renter , Q
     QString estateID = qryEstateID.record().value(0).toString();
     db.close();
 
-    //get renterID from renter table
+    //delete wate_invoice_value for spcific month/year
     db.open();
-    QSqlQuery qryRenterID(db);
-    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
-    qryRenterID.next();
-    QString renterID= qryRenterID.record().value(0).toString();
+    QString sql = "DELETE FROM water_invoice_values WHERE estatesID=%1 and عن_شهر='%2' and سنة='%3'";
+    sql = sql.arg(estateID, month , QString::number(year));
+    db.exec(sql);
+    db.commit();
+    db.close();
+}
+
+double database::calculationForRenterWaterInvoiceValue (QString estate , QString month , int year)
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
     db.close();
 
     /**Calculations needed**/
@@ -416,10 +440,12 @@ double database::getRenterWaterInvoiceValue (QString estate , QString renter , Q
     //get all units water pay percentage from renter table for current estate
     db.open();
     QSqlQuery qryWaterInvoicePercitage(db);
-    qryWaterInvoicePercitage.exec(QString("SELECT renters.نسبة_مئوية_للمياة FROM renters WHERE estatesID=%1 ").arg(estateID));
+    qryWaterInvoicePercitage.exec(QString("SELECT renters.نسبة_مئوية_للمياة , renters.ID FROM renters WHERE estatesID=%1 ").arg(estateID));
     QList<double>WaterInvoicePercitageList ;
+    QList<QString>renterIDs ;
     while (qryWaterInvoicePercitage.next()){
         WaterInvoicePercitageList.push_back(qryWaterInvoicePercitage.record().value(0).toDouble());
+        renterIDs.push_back(qryWaterInvoicePercitage.record().value(1).toString());
     }
     db.close();
 
@@ -431,21 +457,34 @@ double database::getRenterWaterInvoiceValue (QString estate , QString renter , Q
         newBigWaterInvoiceValue += WaterInvoicePercitageList[i]/100 *valuePerUnit;
     }
 
+
     /**calculate get real  Precentage  **/
     double realPercentage = waterInvoiceValue/newBigWaterInvoiceValue;
 
-    //get current renter water invoice percent
     db.open();
-    QSqlQuery qryCurrentRenterWaterPercent(db);
-    qryCurrentRenterWaterPercent.exec(QString("SELECT renters.نسبة_مئوية_للمياة FROM renters WHERE ID=%1 ").arg(renterID));
-    qryCurrentRenterWaterPercent.next();
-    int CurrentRenterWaterPercent= (qryCurrentRenterWaterPercent.record().value(0).toInt())/100;
+    for (int i=0; i<renterIDs.size(); i++){
+        QString sql = "INSERT INTO water_invoice_values ( \
+                    estatesID,\
+                    rentersID,\
+                    عن_شهر,\
+                    سنة,\
+                    المبلغ_المطلوب,\
+                    نسبة_مئوية)\
+                    VALUES (%1,%2,'%3',%4,%5,%6)";
+        sql = sql.arg(estateID,\
+                renterIDs[i],\
+                month,\
+                QString::number(year),\
+                QString::number(((WaterInvoicePercitageList[i]/100)*valuePerUnit)*realPercentage),\
+                QString::number(WaterInvoicePercitageList[i]) );
+        db.exec(sql);
+    }
+    db.commit();
     db.close();
 
-    return (CurrentRenterWaterPercent*valuePerUnit)*realPercentage;
 }
 
-double database::compareWaterInvoicePaidRemaining(QString estate , QString renter , QString month , int year , double renterInvoiceValue)
+double database::getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year)
 {
     //get estateID from estates table
     db.open();
@@ -455,28 +494,47 @@ double database::compareWaterInvoicePaidRemaining(QString estate , QString rente
     QString estateID = qryEstateID.record().value(0).toString();
     db.close();
 
-    //get renterID from renter table
+    //get renterID from rentertable
     db.open();
     QSqlQuery qryRenterID(db);
     qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
     qryRenterID.next();
-    QString renterID= qryRenterID.record().value(0).toString();
+    QString RenterID= qryRenterID.record().value(0).toString();
     db.close();
 
-    /**/
+    //get water invoice value for spcific renter
     db.open();
-    QSqlQuery qryMoneyRegister(db);
-    qryMoneyRegister.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2 and عن_شهر='%3' and سنة='%4'").arg\
-                          (estateID , renterID , month , QString::number(year)));
-    qryMoneyRegister.next();
-    double MoneyRegister= qryMoneyRegister.record().value(0).toDouble();
+    QSqlQuery qryRenterInvoiceValue(db);
+    QString sqlInvoice ="SELECT water_invoice_values.المبلغ_المطلوب FROM water_invoice_values WHERE estatesID=%1 and rentersID=%2 and عن_شهر='%3' and سنة=%4";
+    sqlInvoice= sqlInvoice.arg(\
+                estateID,\
+                RenterID,\
+                month,\
+                QString::number(year));
+    qryRenterInvoiceValue.exec(sqlInvoice);
+    qryRenterInvoiceValue.next();
+    double renterInvoiceValue= qryRenterInvoiceValue.record().value(0).toDouble();
     db.close();
 
-    double result = renterInvoiceValue - MoneyRegister;
-    if ( result > 0){
-        return result;
+    //get register water invoice value
+    db.open();
+    QSqlQuery qryRenterWaterRegisterValue(db);
+    QString sqlRegister ="SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2 and نوع_المعاملة='سداد مياة' and عن_شهر='%3' and سنة=%4";
+    sqlRegister= sqlRegister.arg(\
+                estateID,\
+                RenterID,\
+                month,\
+                QString::number(year));
+    qryRenterWaterRegisterValue.exec(sqlRegister);
+    qryRenterWaterRegisterValue.next();
+    double renterWaterRegisterValue= qryRenterWaterRegisterValue.record().value(0).toDouble();
+    db.close();
+
+    double remaining = (renterInvoiceValue - renterWaterRegisterValue);
+    if ( remaining > 0){
+        return remaining;
     }
-    return 0;
+    return 0 ;
 }
 
 /****************************/
@@ -484,6 +542,7 @@ double database::compareWaterInvoicePaidRemaining(QString estate , QString rente
 /***** Water Invoce Records*****/
 void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData)
 {
+    //record in water_invoice table
     db.open();
     QSqlQuery qryEstateID;
     qryEstateID.prepare(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textDate[0]));
@@ -491,6 +550,7 @@ void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubl
     qryEstateID.next();
     QString estateID = qryEstateID.record().value(0).toString();
     db.close();
+
     db.open();
     QString sql="INSERT INTO water_invoice (\
                 estatesID ,\

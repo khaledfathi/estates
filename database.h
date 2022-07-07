@@ -39,8 +39,9 @@ public:
     /*****Money Records*****/
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
-    double getRenterWaterInvoiceValue (QString estate , QString renter , QString month , int year);
-    double compareWaterInvoicePaidRemaining(QString estate , QString renter , QString month , int year , double renterInvoiceValue);
+    void deleteWaterInvoiceValues(QString estate , QString month , int year);
+    double calculationForRenterWaterInvoiceValue (QString estate , QString month , int year);
+    double getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year);
     /************************/
 
     /***** Water Invoce Records*****/

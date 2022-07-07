@@ -324,6 +324,8 @@ void MainWindow::actionButtonMoneyEmpty(){
     ui->comboBoxMoneyType->setCurrentIndex(0);
     ui->comboBoxMonyMonth->setCurrentIndex(0);
     ui->textEditMoneyNotes->clear();
+    ui->doubleSpinBoxMoneyRemaining->setValue(0);
+    ui->spinBoxMoneyYear->setValue(QDate::currentDate().year());
 }
 
 void MainWindow::actionValidationMoney()
@@ -336,19 +338,20 @@ void MainWindow::actionValidationMoney()
 }
 void MainWindow::actionShowWaterInvoiceDialog()
 {
-    waterInvoice *waterInvoiceDialog = new waterInvoice(this);
+    waterInvoice *waterInvoiceDialog = new waterInvoice(this, ui->comboBoxMoneyRenter);
     waterInvoiceDialog->setModal(true);
     waterInvoiceDialog->show();
 }
 void MainWindow::actionMoneyTypeListChanges()
 {
-    database db (databaseFilePath);
+
     if (ui->comboBoxMoneyType->currentText() == "غير مصنف" || ui->comboBoxMoneyType->currentText() == "سداد اعمال صيانة / طوارئ"){
         ui->comboBoxMonyMonth->setDisabled(true);
         ui->spinBoxMoneyYear->setDisabled(true);
         ui->radioWithdraw->setDisabled(false);
         ui->labelMoneyRemaining->setHidden(true);
         ui->doubleSpinBoxMoneyRemaining->setHidden(true);
+
     }else if (ui->comboBoxMoneyType->currentText()=="سداد مياة"){
         ui->comboBoxMonyMonth->setDisabled(false);
         ui->spinBoxMoneyYear->setDisabled(false);
@@ -356,9 +359,18 @@ void MainWindow::actionMoneyTypeListChanges()
         ui->labelMoneyRemaining->setHidden(false);
         ui->doubleSpinBoxMoneyRemaining->setHidden(false);
         actionSetMonthsDependOnYear();
+
+        database db(databaseFilePath);
+        double remaining =db.getRenterWaterInvoiceRemaining (ui->comboBoxMoneyEstate->currentText(), ui->comboBoxMoneyRenter->currentText(), ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+        ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+
     }else if (ui->comboBoxMoneyType->currentText() == "سداد ايجار"){
         ui->labelMoneyRemaining->setHidden(false);
         ui->doubleSpinBoxMoneyRemaining->setHidden(false);
+        ui->radioWithdraw->setDisabled(true);
+        ui->doubleSpinBoxMoneyRemaining->setValue(0);
+        ui->comboBoxMonyMonth->addItems(database::months);
+
     }else{
         ui->comboBoxMonyMonth->setDisabled(false);
         ui->spinBoxMoneyYear->setDisabled(false);
@@ -397,32 +409,23 @@ void MainWindow::actionaAddMoneyRecord()
             QMessageBox::information(this,"حالة العملية", "تم الحفظ");
         }else { //Record [with] classification
             int opreationType= ui->comboBoxMoneyType->currentIndex();
-            double renterWaterInvoiceValue;
-            double renterRentValue;
+
             if (opreationType == 0){//rent
 
             }else if(opreationType == 1){// water
-                renterWaterInvoiceValue= db.getRenterWaterInvoiceValue(\
-                            ui->comboBoxMoneyEstate->currentText(),\
-                            ui->comboBoxMoneyRenter->currentText(),\
-                            ui->comboBoxMonyMonth->currentText() ,\
-                            ui->spinBoxMoneyYear->value());
+               double Remaining=  db.getRenterWaterInvoiceRemaining\
+                       (ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() ,\
+                        ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value() );
+                QMessageBox::information(this , "" , QString::number(Remaining));
 
-               double waterInvoiceRemaining  = db.compareWaterInvoicePaidRemaining(\
-                           ui->comboBoxMoneyEstate->currentText(),\
-                           ui->comboBoxMoneyRenter->currentText(),\
-                           ui->comboBoxMonyMonth->currentText() ,\
-                           ui->spinBoxMoneyYear->value(),\
-                           renterWaterInvoiceValue);
-               if ( !waterInvoiceRemaining ){
-                   QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "فاتورة شهر "+ui->comboBoxMonyMonth->currentText()+" لهذا المستأجر مسددة بالفعل");
-               }else if (ui->doubleSpinBoxMony->value() > waterInvoiceRemaining){
-                   QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "القيمة المتبقة لفاتورة المياة لهذا المستأجر  : "+ QString::number(waterInvoiceRemaining)+" جنية");
-               }else{
-                   db.MoneyRecord(textDate , doubleData , intData);
-                   QMessageBox::information(this,"حالة العملية", "تم الحفظ");
-                   actionButtonMoneyEmpty();
-                   ui->comboBoxMoneyType->setCurrentIndex(1);
+               if (!Remaining){
+                    QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "الفاتورة المستحقة مسددة بالفعل");
+               }else if (ui->doubleSpinBoxMony->value() > Remaining){
+                   QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "القيمة المتبقية للسداد لهذا المستأجر : "+QString::number(Remaining) + "جنية");
+               }else {
+                    db.MoneyRecord(textDate , doubleData , intData);
+                    QMessageBox::information(this,"حالة العملية", "تم الحفظ");
+                    actionButtonMoneyEmpty();
                }
             }else if(opreationType == 2){// maintenance
                 db.MoneyRecord(textDate , doubleData , intData);
@@ -440,6 +443,12 @@ void MainWindow::actionaAddMoneyRecord()
     }
 }
 
+void MainWindow::actionSetRemainingWaterInvoice()
+{
+    database db(databaseFilePath);
+    double remaining =db.getRenterWaterInvoiceRemaining (ui->comboBoxMoneyEstate->currentText(), ui->comboBoxMoneyRenter->currentText(), ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+    ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+}
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 {
@@ -476,6 +485,21 @@ void MainWindow::on_spinBoxMoneyYear_valueChanged(int arg1)
     actionSetMonthsDependOnYear();
 }
 
+void MainWindow::on_comboBoxMonyMonth_currentIndexChanged(int index)
+{
+    actionSetRemainingWaterInvoice();
+}
+
+void MainWindow::on_comboBoxMoneyRenter_currentIndexChanged(int index)
+{
+    actionButtonMoneyEmpty();
+}
+
+//*** PUBLIC SLOTS ***
+void MainWindow::updataMoneyMonthList()
+{
+    actionSetMonthsDependOnYear();
+}
 /***********************************************/
 
 /************* Renter Tab Section ***************/
@@ -680,6 +704,7 @@ void MainWindow::on_comboBoxReceiptEstate_currentIndexChanged(int index)
 
 
 
+
 /*###############################################*/
 /*###############################################*/
 
@@ -691,6 +716,7 @@ void MainWindow::clearEstatesFields()
 {
     defaultSetupUI();
 }
+
 
 
 

@@ -2,6 +2,7 @@
 #define WATERINVOICE_H
 
 #include <QDialog>
+#include <QComboBox>
 
 namespace Ui {
 class waterInvoice;
@@ -28,7 +29,7 @@ private:
     };
 public:
 
-    explicit waterInvoice(QWidget *parent = nullptr);
+    explicit waterInvoice(QWidget *parent = nullptr , QComboBox *renterName=nullptr);
     ~waterInvoice();
 
     /******* General *********/
