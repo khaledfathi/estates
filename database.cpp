@@ -443,8 +443,42 @@ double database::getRenterWaterInvoiceValue (QString estate , QString renter , Q
     db.close();
 
     return (CurrentRenterWaterPercent*valuePerUnit)*realPercentage;
-
 }
+
+double database::compareWaterInvoicePaidRemaining(QString estate , QString renter , QString month , int year , double renterInvoiceValue)
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get renterID from renter table
+    db.open();
+    QSqlQuery qryRenterID(db);
+    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
+    qryRenterID.next();
+    QString renterID= qryRenterID.record().value(0).toString();
+    db.close();
+
+    /**/
+    db.open();
+    QSqlQuery qryMoneyRegister(db);
+    qryMoneyRegister.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2 and عن_شهر='%3' and سنة='%4'").arg\
+                          (estateID , renterID , month , QString::number(year)));
+    qryMoneyRegister.next();
+    double MoneyRegister= qryMoneyRegister.record().value(0).toDouble();
+    db.close();
+
+    double result = renterInvoiceValue - MoneyRegister;
+    if ( result > 0){
+        return result;
+    }
+    return 0;
+}
+
 /****************************/
 
 /***** Water Invoce Records*****/

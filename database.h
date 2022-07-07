@@ -40,6 +40,7 @@ public:
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     double getRenterWaterInvoiceValue (QString estate , QString renter , QString month , int year);
+    double compareWaterInvoicePaidRemaining(QString estate , QString renter , QString month , int year , double renterInvoiceValue);
     /************************/
 
     /***** Water Invoce Records*****/

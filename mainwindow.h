@@ -27,6 +27,7 @@ public:
     void actionbuttonExit();
     void actionAboutQt();
     void actionAboutApp();
+    void actionEmptyAllTabs();
     /************************************************/
 
     /************* Query Tab Section ***************/
@@ -83,6 +84,8 @@ private slots:
     void on_menuExit_triggered();
     void on_menuAboutQt_triggered();
     void on_menuAboutApp_triggered();
+    void on_tabWidgetMain_currentChanged(int index);
+
 
     //*** SIGNAL AND SLOT for Query Tab ***
     void on_comboBoxQueryReport_currentIndexChanged(int index);
@@ -114,6 +117,9 @@ private slots:
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
 
     //*** For Testing ***
+
+
+
 
 public slots:
     void clearEstatesFields();
