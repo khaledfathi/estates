@@ -33,12 +33,13 @@ public:
     /*****Renters Records*****/
     void RenterRecord (QList<QString> textData , QList<int> digitData);
     QString checkMaxUnitNumber (QString estate , QString unitType , int unitNumber);
-    bool checkDuplicatedUnitNumber(QString estate , QString unitType , int unitNumber);
+    bool checkDuplicatedUnitNumber(QString estate , QString unitType , int unitNumber);    
     /************************/
 
     /*****Money Records*****/
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
+    double getRenterWaterInvoiceValue (QString estate , QString renter , QString month , int year);
     /************************/
 
     /***** Water Invoce Records*****/

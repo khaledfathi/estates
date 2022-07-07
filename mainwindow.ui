@@ -618,10 +618,10 @@
              <number>2</number>
             </property>
             <property name="minimum">
-             <double>-999999999.000000000000000</double>
+             <double>-999999.000000000000000</double>
             </property>
             <property name="maximum">
-             <double>999999999.000000000000000</double>
+             <double>999999.000000000000000</double>
             </property>
             <property name="singleStep">
              <double>0.250000000000000</double>
@@ -1690,7 +1690,7 @@
              <enum>QAbstractSpinBox::NoButtons</enum>
             </property>
             <property name="maximum">
-             <number>99999</number>
+             <number>999999</number>
             </property>
            </widget>
           </item>

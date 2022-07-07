@@ -359,30 +359,33 @@ void MainWindow::actionaAddMoneyRecord()
         QMessageBox::warning(this,"خطأ فى البيانات المدخلة",message);
     }else{
         QList<QString> textDate;
-        QList<double> doubleDate;
-        QList<int> intDate;
-        getMoneyRecord(&textDate, &doubleDate , &intDate);
+        QList<double> doubleData;
+        QList<int> intData;
+        getMoneyRecord(&textDate, &doubleData , &intData);
         database db(databaseFilePath);
         if (ui->checkBoxAddFreeMoney->isChecked()){ //Record [without] classification
-            db.MoneyRecordUnclassified(textDate , doubleDate , intDate);
+            db.MoneyRecordUnclassified(textDate , doubleData , intData);
             QMessageBox::information(this,"حالة العملية", "تم الحفظ");
         }else { //Record [with] classification
             int opreationType= ui->comboBoxMoneyType->currentIndex();
+            double renterWaterInvoiceValue;
+            double renterRentValue;
             switch (opreationType){
             case 0 : //rent
-
                 break;
             case 1 : // water
-
+                 renterWaterInvoiceValue= db.getRenterWaterInvoiceValue(\
+                             textDate[0],textDate[1], textDate[4] , intData[3]); //string[0] -> estate string[1] -> renter string[4]->month int[3]->year
+                QMessageBox::information(this , "" , QString::number(renterWaterInvoiceValue));
                 break;
             case 2 : // maintenance
-
+                return ;
                 break;
             case 3 : //unclassiified
-
+                return ;
                 break;
             }
-            db.MoneyRecord(textDate , doubleDate , intDate);
+            //db.MoneyRecord(textDate , doubleDate , intDate);
         }
     }
 }

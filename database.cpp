@@ -377,6 +377,74 @@ void database::MoneyRecordUnclassified (QList<QString> textData , QList<double> 
     db.commit();
     db.close();
 }
+
+double database::getRenterWaterInvoiceValue (QString estate , QString renter , QString month , int year)
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get renterID from renter table
+    db.open();
+    QSqlQuery qryRenterID(db);
+    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
+    qryRenterID.next();
+    QString renterID= qryRenterID.record().value(0).toString();
+    db.close();
+
+    /**Calculations needed**/
+    //get water invoice value for current month
+    db.open();
+    QSqlQuery qryWaterInvoiceValue(db);
+    qryWaterInvoiceValue.exec(QString("SELECT water_invoice.قيمة_الفاتورة FROM water_invoice WHERE estatesID=%1  and عن_شهر='%2' and سنة=%3").arg(estateID ,month,QString::number(year)));
+    qryWaterInvoiceValue.next();
+    double waterInvoiceValue= qryWaterInvoiceValue.record().value(0).toDouble();
+    db.close();
+
+    //get count of units from renters table for current estate
+    db.open();
+    QSqlQuery qryUnits(db);
+    qryUnits.exec(QString("SELECT COUNT(renters.رقم_الوحدة) FROM renters WHERE estatesID=%1 ").arg(estateID));
+    qryUnits.next();
+    int unitsCounts = qryUnits.record().value(0).toInt();
+    db.close();
+
+    //get all units water pay percentage from renter table for current estate
+    db.open();
+    QSqlQuery qryWaterInvoicePercitage(db);
+    qryWaterInvoicePercitage.exec(QString("SELECT renters.نسبة_مئوية_للمياة FROM renters WHERE estatesID=%1 ").arg(estateID));
+    QList<double>WaterInvoicePercitageList ;
+    while (qryWaterInvoicePercitage.next()){
+        WaterInvoicePercitageList.push_back(qryWaterInvoicePercitage.record().value(0).toDouble());
+    }
+    db.close();
+
+    /**calculate percent * value per unit = new big water invoice **/
+    double valuePerUnit = waterInvoiceValue/unitsCounts;
+    double newBigWaterInvoiceValue =0;
+
+    for (int i=0; i<WaterInvoicePercitageList.size(); i++){
+        newBigWaterInvoiceValue += WaterInvoicePercitageList[i]/100 *valuePerUnit;
+    }
+
+    /**calculate get real  Precentage  **/
+    double realPercentage = waterInvoiceValue/newBigWaterInvoiceValue;
+
+    //get current renter water invoice percent
+    db.open();
+    QSqlQuery qryCurrentRenterWaterPercent(db);
+    qryCurrentRenterWaterPercent.exec(QString("SELECT renters.نسبة_مئوية_للمياة FROM renters WHERE ID=%1 ").arg(renterID));
+    qryCurrentRenterWaterPercent.next();
+    int CurrentRenterWaterPercent= (qryCurrentRenterWaterPercent.record().value(0).toInt())/100;
+    db.close();
+
+    return (CurrentRenterWaterPercent*valuePerUnit)*realPercentage;
+
+}
 /****************************/
 
 /***** Water Invoce Records*****/
