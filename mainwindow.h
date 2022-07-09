@@ -54,7 +54,8 @@ public:
     void actionMoneyTypeListChanges();
     void actionSetMonthsDependOnYear();
     void actionaAddMoneyRecord();
-    void actionSetRemainingWaterInvoice();
+    void actionSetRemainingRemainingValue();
+    void actionMoneyValueChanges();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
@@ -105,6 +106,8 @@ private slots:
     void on_spinBoxMoneyYear_valueChanged(int arg1);
     void on_comboBoxMonyMonth_currentIndexChanged(int index);
     void on_comboBoxMoneyRenter_currentIndexChanged(int index);
+    void on_doubleSpinBoxMony_valueChanged(double arg1);
+
 
 
     //*** SIGNAL AND SLOT for Renter Tab***
@@ -120,7 +123,6 @@ private slots:
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
 
     //*** For Testing ***
-
 
 
 

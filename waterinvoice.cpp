@@ -152,7 +152,7 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
         }        
         QMessageBox confirm(this) ;
         confirm.setWindowTitle("حالة العملية");
-        confirm.setText("تأكيد الحذف !");
+        confirm.setText("ستم حذف كل الحسابات المتعلقة بهذه الفاتورة من كافة السجلات\nهل انت موافق ؟");
         confirm.setLayoutDirection(Qt::LayoutDirection::RightToLeft);
         confirm.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         confirm.setDefaultButton(QMessageBox::No);
@@ -161,8 +161,8 @@ void waterInvoice::actionDeleteWaterInvoiceRecord()
         if (confirm.exec() == QMessageBox::Yes){
             database db(databaseFilePath);
             db.waterInvoiceDeleteRecord(ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()));
-
             db.deleteWaterInvoiceValues(ui->comboBoxEstate->currentText() ,ui->comboBoxMonth->currentText(), ui->spinBoxYear->value());
+            db.deleteWaterInvoiceMoneyRecords(ui->comboBoxEstate->currentText() ,ui->comboBoxMonth->currentText(), ui->spinBoxYear->value());
             QMessageBox::information(this,"حالة العملية", "تم الحذف");
             ui->comboBoxMonth->clear();
             db.setRegisterdMonthList(ui->comboBoxEstate->currentText() , QString::number( ui->spinBoxYear->value() ) ,ui->comboBoxMonth);

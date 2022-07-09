@@ -31,6 +31,10 @@ public:
     /************************/
 
     /*****Renters Records*****/
+    double getRenterRentRemaining (QString estate , QString renter , QString month , double year );
+    /*************************/
+
+    /*****Renters Records*****/
     void RenterRecord (QList<QString> textData , QList<int> digitData);
     QString checkMaxUnitNumber (QString estate , QString unitType , int unitNumber);
     bool checkDuplicatedUnitNumber(QString estate , QString unitType , int unitNumber);    
@@ -40,6 +44,7 @@ public:
     void MoneyRecord  (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void deleteWaterInvoiceValues(QString estate , QString month , int year);
+    void deleteWaterInvoiceMoneyRecords(QString estate, QString month , int year);
     double calculationForRenterWaterInvoiceValue (QString estate , QString month , int year);
     double getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year);
     /************************/

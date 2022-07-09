@@ -45,6 +45,9 @@
         <property name="text">
          <string>خروج</string>
         </property>
+        <property name="default">
+         <bool>false</bool>
+        </property>
        </widget>
       </item>
       <item row="0" column="0">
@@ -377,6 +380,9 @@
                   <property name="text">
                    <string>استعلام</string>
                   </property>
+                  <property name="default">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                 <item row="0" column="0">
@@ -627,6 +633,9 @@
                </property>
                <property name="text">
                 <string>حفظ</string>
+               </property>
+               <property name="default">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -1517,6 +1526,9 @@
                <property name="text">
                 <string>حفظ</string>
                </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item row="0" column="3">
@@ -1899,6 +1911,9 @@
                <property name="text">
                 <string>حفظ</string>
                </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
               </widget>
              </item>
              <item row="0" column="2">
@@ -2228,6 +2243,9 @@
             </property>
             <property name="text">
              <string>طباعة</string>
+            </property>
+            <property name="default">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

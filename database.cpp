@@ -297,6 +297,51 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 /************************/
 
 
+/*****Renters Records*****/
+double database::getRenterRentRemaining (QString estate , QString renter , QString month , double year )
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get renterID from rentertable
+    db.open();
+    QSqlQuery qryRenterID(db);
+    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
+    qryRenterID.next();
+    QString RenterID= qryRenterID.record().value(0).toString();
+    db.close();
+
+    //get sum of renter rent value for this renter
+    db.open();
+    QSqlQuery qryRenterRentValue(db);
+    qryRenterRentValue.exec(QString("SELECT renters.قيمة_الايجار from renters WHERE estatesID=%1 and  ID=%2").arg(estateID , RenterID));
+    qryRenterRentValue.next();
+    double RenterRentValue= qryRenterRentValue.record().value(0).toDouble();
+    db.close();
+
+    //get sum of renter register values
+    db.open();
+    QSqlQuery qryRenterRegisterValue(db);
+    QString sql = "SELECT SUM(money.المبلغ_المدفوع ) FROM money WHERE estatesID=%1 and rentersID=%2 and عن_شهر='%3'  and سنة=%4 and نوع_المعاملة='سداد ايجار'";
+    sql = sql.arg(estateID, RenterID , month , QString::number(year));
+    qryRenterRegisterValue.exec(sql);
+    qryRenterRegisterValue.next();
+    double renterRegisterValue= qryRenterRegisterValue.record().value(0).toDouble();
+    db.close();
+
+    double remaining = RenterRentValue-renterRegisterValue ;
+    if (remaining > 0){
+        return remaining ;
+    }
+    return 0;
+}
+/*************************/
+
 /********Money Records********/
 void database::MoneyRecord (QList<QString> textData , QList<double> doubleData , QList<int> intData)
 {
@@ -405,6 +450,25 @@ void database::deleteWaterInvoiceValues(QString estate , QString month , int yea
     db.open();
     QString sql = "DELETE FROM water_invoice_values WHERE estatesID=%1 and عن_شهر='%2' and سنة='%3'";
     sql = sql.arg(estateID, month , QString::number(year));
+    db.exec(sql);
+    db.commit();
+    db.close();
+}
+
+void database::deleteWaterInvoiceMoneyRecords(QString estate , QString month , int year)
+{
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //delete water invoice releated from mony tabel
+    db.open();
+    QString sql = "DELETE FROM money WHERE estatesID=%1 and عن_شهر='%2' and سنة=%3";
+    sql = sql.arg(estateID , month , QString::number(year));
     db.exec(sql);
     db.commit();
     db.close();

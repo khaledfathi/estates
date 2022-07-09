@@ -33,12 +33,12 @@ MainWindow::~MainWindow()
 /************* General ***************/
 void MainWindow::defaultSetupUI(){
     setCurrentDateUI();
-    defaultQueryTabUI();
-    defaultMoneyTabUI();
     actionEstatesFiledsFromDatabase();
     actionRentersFiledsFromDatabase("MONEY");
     actionRentersFiledsFromDatabase("RECIPET");
     actionRentersFiledsFromDatabase("QUERY");
+    defaultQueryTabUI();
+    defaultMoneyTabUI();
 }
 
 void MainWindow::setCurrentDateUI(){
@@ -69,7 +69,7 @@ void MainWindow::actionRentersFiledsFromDatabase(QString location)
     if (location == "QUERY"){
         db.rentersList(ui->comboBoxQueryRenter, ui->comboBoxQueryEstate->currentText());
     }else if (location == "MONEY"){
-        db.rentersList(ui->comboBoxMoneyRenter, ui->comboBoxMoneyEstate->currentText());
+        db.rentersList(ui->comboBoxMoneyRenter, ui->comboBoxMoneyEstate->currentText());        
     }else if (location == "RECIPET"){
         db.rentersList(ui->comboBoxReceiptRenter , ui->comboBoxReceiptEstate->currentText());
     }
@@ -251,6 +251,10 @@ void MainWindow::defaultMoneyTabUI()
     ui->labelMoneyRemaining->setHidden(false);
     ui->radioWithdraw->setDisabled(true);
     ui->comboBoxMonyMonth->addItems(database::months);
+
+    database db(databaseFilePath);
+    double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value());
+    ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
 }
 
 void MainWindow::setMoneyTabFieldsStatus(bool state)
@@ -325,7 +329,7 @@ void MainWindow::actionButtonMoneyEmpty(){
     ui->comboBoxMonyMonth->setCurrentIndex(0);
     ui->textEditMoneyNotes->clear();
     ui->doubleSpinBoxMoneyRemaining->setValue(0);
-    ui->spinBoxMoneyYear->setValue(QDate::currentDate().year());
+    ui->spinBoxMoneyYear->setValue(QDate::currentDate().year());   
 }
 
 void MainWindow::actionValidationMoney()
@@ -344,6 +348,8 @@ void MainWindow::actionShowWaterInvoiceDialog()
 }
 void MainWindow::actionMoneyTypeListChanges()
 {
+    //reset money value
+    ui->doubleSpinBoxMony->setValue(0);
 
     if (ui->comboBoxMoneyType->currentText() == "غير مصنف" || ui->comboBoxMoneyType->currentText() == "سداد اعمال صيانة / طوارئ"){
         ui->comboBoxMonyMonth->setDisabled(true);
@@ -365,11 +371,17 @@ void MainWindow::actionMoneyTypeListChanges()
         ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
 
     }else if (ui->comboBoxMoneyType->currentText() == "سداد ايجار"){
+        ui->comboBoxMonyMonth->setDisabled(false);
+        ui->spinBoxMoneyYear->setDisabled(false);
         ui->labelMoneyRemaining->setHidden(false);
         ui->doubleSpinBoxMoneyRemaining->setHidden(false);
         ui->radioWithdraw->setDisabled(true);
-        ui->doubleSpinBoxMoneyRemaining->setValue(0);
+        ui->comboBoxMonyMonth->clear();
         ui->comboBoxMonyMonth->addItems(database::months);
+
+        database db(databaseFilePath);
+        double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value());
+        ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
 
     }else{
         ui->comboBoxMonyMonth->setDisabled(false);
@@ -391,7 +403,7 @@ void MainWindow::actionSetMonthsDependOnYear()
     }
 }
 
-void MainWindow::actionaAddMoneyRecord()
+void MainWindow:: actionaAddMoneyRecord()
 {
     //actionValidationMoney();
     validation valid ;
@@ -411,21 +423,33 @@ void MainWindow::actionaAddMoneyRecord()
             int opreationType= ui->comboBoxMoneyType->currentIndex();
 
             if (opreationType == 0){//rent
+                double rentRemaining  = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+                if (!rentRemaining){
+                    QMessageBox::information(this,"خطأ فى البيانات المسجلة", "الايجار المستحق مدفوع بالفعل");
+                }else if (ui->doubleSpinBoxMony->value() > rentRemaining){
+                    QMessageBox::warning(this,"خطأ فى المعلومات المسجلة" , "القيمة المستحقة للسداد لهذا المستأجر : " + QString::number(rentRemaining) + " جنية");
+                }else {
+                    db.MoneyRecord(textDate , doubleData , intData);
+                    QMessageBox::information(this,"حالة العملية", "تم الحفظ");
+                    actionButtonMoneyEmpty();
+                    actionMoneyValueChanges();
+                }
+                ui->comboBoxMoneyType->setCurrentIndex(0);
 
             }else if(opreationType == 1){// water
-               double Remaining=  db.getRenterWaterInvoiceRemaining\
+               double waterInvoiceRemaining=  db.getRenterWaterInvoiceRemaining\
                        (ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() ,\
                         ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value() );
-                QMessageBox::information(this , "" , QString::number(Remaining));
 
-               if (!Remaining){
+               if (!waterInvoiceRemaining){
                     QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "الفاتورة المستحقة مسددة بالفعل");
-               }else if (ui->doubleSpinBoxMony->value() > Remaining){
-                   QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "القيمة المتبقية للسداد لهذا المستأجر : "+QString::number(Remaining) + "جنية");
+               }else if (ui->doubleSpinBoxMony->value() > waterInvoiceRemaining){
+                   QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "القيمة المتبقية للسداد لهذا المستأجر : "+QString::number(waterInvoiceRemaining) + "جنية");
                }else {
                     db.MoneyRecord(textDate , doubleData , intData);
                     QMessageBox::information(this,"حالة العملية", "تم الحفظ");
                     actionButtonMoneyEmpty();
+                    ui->comboBoxMoneyType->setCurrentIndex(1);
                }
             }else if(opreationType == 2){// maintenance
                 db.MoneyRecord(textDate , doubleData , intData);
@@ -443,12 +467,44 @@ void MainWindow::actionaAddMoneyRecord()
     }
 }
 
-void MainWindow::actionSetRemainingWaterInvoice()
+void MainWindow::actionSetRemainingRemainingValue()
 {
-    database db(databaseFilePath);
-    double remaining =db.getRenterWaterInvoiceRemaining (ui->comboBoxMoneyEstate->currentText(), ui->comboBoxMoneyRenter->currentText(), ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
-    ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+    QString moneyType = ui->comboBoxMoneyType->currentText();
+    if (moneyType == "سداد مياة"){
+        database db(databaseFilePath);
+        double remaining =db.getRenterWaterInvoiceRemaining (ui->comboBoxMoneyEstate->currentText(), ui->comboBoxMoneyRenter->currentText(), ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+        ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+    }else if (moneyType == "سداد ايجار"){
+        database db(databaseFilePath);
+        double remaining =db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText(), ui->comboBoxMoneyRenter->currentText(), ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+        ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+    }
+
 }
+
+void MainWindow::actionMoneyValueChanges()
+{
+    double value = ui->doubleSpinBoxMony->value();
+    database db(databaseFilePath);
+    if (ui->comboBoxMoneyType->currentText() == "سداد ايجار"){
+        double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+        if ( value > 0 ){
+            ui->doubleSpinBoxMoneyRemaining->setValue(remaining-value);
+        }else{
+            ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+        }
+    }else if (ui->comboBoxMoneyType->currentText() == "سداد مياة") {
+        double remaining = db.getRenterWaterInvoiceRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
+        if ( value > 0 ){
+            ui->doubleSpinBoxMoneyRemaining->setValue(remaining-value);
+        }else{
+            ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+        }
+
+    }
+
+}
+
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
 {
@@ -487,12 +543,18 @@ void MainWindow::on_spinBoxMoneyYear_valueChanged(int arg1)
 
 void MainWindow::on_comboBoxMonyMonth_currentIndexChanged(int index)
 {
-    actionSetRemainingWaterInvoice();
+    actionSetRemainingRemainingValue();
 }
 
 void MainWindow::on_comboBoxMoneyRenter_currentIndexChanged(int index)
 {
     actionButtonMoneyEmpty();
+    actionMoneyValueChanges();
+}
+
+void MainWindow::on_doubleSpinBoxMony_valueChanged(double arg1)
+{
+    actionMoneyValueChanges();
 }
 
 //*** PUBLIC SLOTS ***
@@ -716,6 +778,9 @@ void MainWindow::clearEstatesFields()
 {
     defaultSetupUI();
 }
+
+
+
 
 
 
