@@ -799,9 +799,78 @@ void database::setMoneyValue (QString estate, QString  month , QString year , QD
 /*******************************/
 
 
+
+/******* Query Dialog *********/
+QList<double> database::QueryActualMoney (QString estate)
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //sum of rent
+    db.open();
+    QSqlQuery qrySumOfRent(db);
+    qrySumOfRent.exec(QString("SELECT SUM (money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and نوع_المعاملة='سداد ايجار'").arg(estateID) );
+    qrySumOfRent.next();
+    double sumOfRent = qrySumOfRent.record().value(0).toDouble();
+    db.close();
+
+    //sum of rent
+    db.open();
+    QSqlQuery qrySumOfwaterInvoice(db);
+    qrySumOfwaterInvoice.exec(QString("SELECT SUM (money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and نوع_المعاملة='سداد مياة'").arg(estateID) );
+    qrySumOfwaterInvoice.next();
+    double SumOfwaterInvoice= qrySumOfwaterInvoice.record().value(0).toDouble();
+    db.close();
+
+    //sum of maintenance
+    db.open();
+    QSqlQuery qrySumOfMaintenance(db);
+    qrySumOfMaintenance.exec(QString("SELECT SUM (money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and نوع_المعاملة='سداد اعمال صيانة / طوارئ'").arg(estateID) );
+    qrySumOfMaintenance.next();
+    double SumOfMaintenance =  qrySumOfMaintenance.record().value(0).toDouble();
+    db.close();
+
+    //sum of unclassified [used for renter]
+    db.open();
+    QSqlQuery qrySumOfunclassified(db);
+    qrySumOfunclassified.exec(QString("SELECT SUM (money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and نوع_المعاملة='غير مصنف'").arg(estateID) );
+    qrySumOfunclassified.next();
+    double SumOfunclassified =  qrySumOfunclassified.record().value(0).toDouble();
+    db.close();
+
+    //sum of unclassified [used for owner]
+    db.open();
+    QSqlQuery qrySumOfunclassifiedOwner(db);
+    qrySumOfunclassifiedOwner.exec(QString("SELECT SUM (money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and نوع_المعاملة IS NULL").arg(estateID) );
+    qrySumOfunclassifiedOwner.next();
+    double SumOfunclassifiedOwner =  qrySumOfunclassifiedOwner.record().value(0).toDouble();
+    db.close();
+
+    double total =sumOfRent + SumOfwaterInvoice + SumOfMaintenance + SumOfunclassified + SumOfunclassifiedOwner ;
+
+    QList<double> results ;
+    results.push_back(sumOfRent);
+    results.push_back(SumOfwaterInvoice);
+    results.push_back(SumOfMaintenance);
+    results.push_back(SumOfunclassified);
+    results.push_back(SumOfunclassifiedOwner);
+    results.push_back(total);
+    return results;
+}
+/******************************/
+
+
+
 /**********************************/
 
-void database::setTestModel(QTreeView *resultTable , QString tableName){
+void database::QueryAllFromTable(QTreeView *resultTable , QString tableName){
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
     db.setDatabaseName(databaseFile);
     db.open();
@@ -814,6 +883,5 @@ void database::setTestModel(QTreeView *resultTable , QString tableName){
     db.close();
     QSqlDatabase::removeDatabase("conn");
 }
-
 
 

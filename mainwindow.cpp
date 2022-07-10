@@ -5,12 +5,12 @@
 #include <QDir>
 #include "validation.h"
 #include "about.h"
-#include "queryResult.h"
 #include "waterinvoice.h"
-
+#include "rawdatabase.h"
 #include <QSqlDatabase>
 #include <QSqlQuery>
 #include <QSqlRecord>
+#include "query.h"
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
@@ -102,6 +102,11 @@ void MainWindow::actionEmptyAllTabs()
     actionButtonMoneyEmpty();
     actionButtonRenterEmpty();
 }
+void MainWindow::actionShowRawDatabase()
+{
+    rawdatabase *showAll = new rawdatabase(this);
+    showAll->show();
+}
 
 //*** SIGNAL AND SLOT for MainWindow Tab ***
 void MainWindow::on_menuExit_triggered()
@@ -130,6 +135,10 @@ void MainWindow::on_tabWidgetMain_currentChanged(int index)
     actionMoneyValueChanges();
 }
 
+void MainWindow::on_menuViewAllData_triggered()
+{
+    actionShowRawDatabase();
+}
 /************************************************/
 
 /************* Query Tab Section ***************/
@@ -212,12 +221,26 @@ void MainWindow::actioncheckBoxQueryRenterChanged(int status)
         ui->comboBoxQueryRenter->setDisabled(true);
     }
 }
-void MainWindow::actionShowQueryResult()
+
+void MainWindow::actionQueryButton()
 {
-    queryResult *res = new queryResult (this) ;
-    res->setModal(true);
-    res->showData();
-    res->show();
+    if (ui->comboBoxQueryEstate->currentText().isEmpty()){
+        QMessageBox::warning(this , "خطأ فى البيانات المدخلة", "سجل عقار أولاً");
+    }else{
+        //get fields data
+        QList<QString> fieldsData ;
+        fieldsData.push_back(ui->comboBoxQueryEstate->currentText());
+        fieldsData.push_back(ui->comboBoxQueryReport->currentText());
+        fieldsData.push_back(ui->labelQueryDateFrom->text());
+        fieldsData.push_back(ui->labelQueryDateTo->text());
+        fieldsData.push_back(ui->comboBoxQueryRenter->currentText());
+        bool isQueryRenterSelected = ui->checkBoxQueryRenter->isChecked();
+
+        query *queryDialog = new query(this , fieldsData , isQueryRenterSelected);
+        queryDialog->setModal(true);
+        queryDialog->show();
+    }
+
 }
 
 //*** SIGNAL AND SLOT for Query Tab ***
@@ -233,7 +256,7 @@ void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
 
 void MainWindow::on_buttonQuery_clicked()
 {
-
+    actionQueryButton();
 }
 
 void MainWindow::on_comboBoxQueryEstate_currentIndexChanged(int index)
@@ -779,8 +802,5 @@ void MainWindow::clearEstatesFields()
     defaultSetupUI();
 }
 
-void MainWindow::on_menuViewAllData_triggered()
-{
-    actionShowQueryResult();
-}
+
 

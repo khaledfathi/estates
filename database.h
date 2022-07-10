@@ -57,8 +57,12 @@ public:
     void setMoneyValue (QString estate, QString  month , QString year , QDoubleSpinBox *moneyValue);
     /*******************************/
 
+    /******* Query Dialog *********/
+    QList<double> QueryActualMoney (QString estate);
+    /******************************/
+
      //**** TEST ****
-    void setTestModel(QTreeView *resultTable , QString tableName);
+    void QueryAllFromTable(QTreeView *resultTable , QString tableName);
 
 
 };

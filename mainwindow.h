@@ -28,6 +28,7 @@ public:
     void actionAboutQt();
     void actionAboutApp();
     void actionEmptyAllTabs();
+    void actionShowRawDatabase();
     /************************************************/
 
     /************* Query Tab Section ***************/
@@ -38,7 +39,7 @@ public:
     void actionQueryReportChanges();
     void actionValidationQuery();
     void actioncheckBoxQueryRenterChanged(int status);
-    void actionShowQueryResult();
+    void actionQueryButton();
     /***********************************************/
 
     /************* Money Tab Section ***************/
@@ -87,6 +88,7 @@ private slots:
     void on_menuAboutQt_triggered();
     void on_menuAboutApp_triggered();
     void on_tabWidgetMain_currentChanged(int index);
+    void on_menuViewAllData_triggered();
 
 
     //*** SIGNAL AND SLOT for Query Tab ***
@@ -127,7 +129,6 @@ private slots:
 
 
 
-    void on_menuViewAllData_triggered();
 
 public slots:
     void updataMoneyMonthList();

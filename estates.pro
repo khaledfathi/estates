@@ -16,7 +16,8 @@ SOURCES += \
     database.cpp \
     main.cpp \
     mainwindow.cpp \
-    queryResult.cpp \
+    query.cpp \
+    rawdatabase.cpp \
     validation.cpp \
     waterinvoice.cpp
 
@@ -24,14 +25,16 @@ HEADERS += \
     about.h \
     database.h \
     mainwindow.h \
-    queryResult.h \
+    query.h \
+    rawdatabase.h \
     validation.h \
     waterinvoice.h
 
 FORMS += \
     about.ui \
     mainwindow.ui \
-    queryResult_.ui \
+    query.ui \
+    rawdatabase.ui \
     waterinvoice.ui
 
 # Default rules for deployment.
@@ -41,3 +44,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     resourse.qrc
+
+DISTFILES += \
+    a.html
