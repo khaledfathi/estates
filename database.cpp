@@ -20,15 +20,16 @@ QList<QString> database::months ={\
 
 database::database(QString filePath)
 {
-    databaseFile = filePath;
-    db.setDatabaseName(databaseFile);
+    databaseFile = filePath;    
     createDatebaseTabels();
 }
 database::~database(){
-    db.removeDatabase("QSQLITE");
+
 }
 void database::createDatebaseTabels()
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");    
+    db.setDatabaseName(databaseFile);
     db.open();
     db.exec(\
                 "CREATE TABLE IF NOT EXISTS \"estates\" (\
@@ -104,47 +105,57 @@ void database::createDatebaseTabels()
             );
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 bool database::isDatabaseWork()
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //Check if database working or not
     db.open();
     bool check = db.isOpen();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
     return check;
 }
 
 /******* General *********/
 void database::estatesList (QComboBox *estateList)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QSqlQueryModel *model =new QSqlQueryModel();
-    QSqlQuery *qry = new QSqlQuery(db);
-    qry->prepare("select 'estates'.'اسم_رمزى_للعقار' from 'estates'");
-    qry->exec();
-    model->setQuery(*qry);
+    QSqlQuery qry(db);
+    qry.prepare("select 'estates'.'اسم_رمزى_للعقار' from 'estates'");
+    qry.exec();
+    model->setQuery(qry);
     estateList->setModel(model);
-    db.open();
+    db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 void database::rentersList (QComboBox *rentersList , QString estate)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     QString estatesID ;
     db.open();
-    QSqlQuery *qryEstatesID = new QSqlQuery;
-    qryEstatesID->exec(QString("select estates.ID from estates where estates.اسم_رمزى_للعقار='%1' ").arg(estate));
-    qryEstatesID->next();
-    estatesID = qryEstatesID->record().value(0).toString();
+    QSqlQuery qryEstatesID(db);
+    qryEstatesID.exec(QString("select estates.ID from estates where estates.اسم_رمزى_للعقار='%1' ").arg(estate));
+    qryEstatesID.next();
+    estatesID = qryEstatesID.record().value(0).toString();
     db.close();
 
     db.open();
     QSqlQueryModel *model =new QSqlQueryModel();
-    QSqlQuery *qry = new QSqlQuery(db);
-    qry->prepare(QString("select renters.اسم_المستأجر from renters where renters.estatesID=%1").arg(estatesID));
-    qry->exec();
-    model->setQuery(*qry);
+    QSqlQuery qry(db);
+    qry.prepare(QString("select renters.اسم_المستأجر from renters where renters.estatesID=%1").arg(estatesID));
+    qry.exec();
+    model->setQuery(qry);
     rentersList->setModel(model);
-    db.open();
+    db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 /*************************/
 
@@ -152,17 +163,24 @@ void database::rentersList (QComboBox *rentersList , QString estate)
 /*****Estates Records*****/
 bool database::checkEstatesDuplicated(QString valueToCheck)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //check estates Name Duplication
     db.open();
-    QSqlQuery x  = db.exec(QString("SELECT * FROM 'estates' WHERE اسم_رمزى_للعقار='%1'").arg(valueToCheck));
-    x.next();
-    QString data = x.value(1).toString();
+    QSqlQuery qry(db);
+    qry.exec(QString("SELECT estates.اسم_رمزى_للعقار FROM 'estates' WHERE اسم_رمزى_للعقار='%1'").arg(valueToCheck));
+    qry.next();
+    QString data = qry.record().value(0).toString();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
     return (data == valueToCheck);
+
 }
 
 void database::estateRecord(QList<QString> textData , QList<int> digitData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QString sql = "INSERT INTO 'estates' (\
               \"اسم_رمزى_للعقار\",\
@@ -185,18 +203,20 @@ void database::estateRecord(QList<QString> textData , QList<int> digitData)
     db.exec(sql);
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
-
 
 /*****Renters Records*****/
 void database::RenterRecord (QList<QString> textData , QList<int> digitData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get ID by find ==> estates -> اسم_رمزى_للعقار
     db.open();
-    QSqlQuery *qry = new QSqlQuery(db) ;
-    qry->exec(QString("SELECT estates.ID FROM estates where اسم_رمزى_للعقار='%1'").arg(textData[0]));
-    qry->next();
-    QString estatesID= qry->record().value(0).toString();
+    QSqlQuery qry(db) ;
+    qry.exec(QString("SELECT estates.ID FROM estates where اسم_رمزى_للعقار='%1'").arg(textData[0]));
+    qry.next();
+    QString estatesID= qry.record().value(0).toString();
     db.close();
 
     //add data record
@@ -229,10 +249,13 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
 
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 QString database::checkMaxUnitNumber (QString estate , QString unitType , int unitNumber)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     QString message = "";
     int MaxUnitNumber ;
     db.open();
@@ -256,11 +279,15 @@ QString database::checkMaxUnitNumber (QString estate , QString unitType , int un
         }
     }
     db.close();
+    QSqlDatabase::removeDatabase("conn");
     return message;
+
 }
 
 bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int unitNumber)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QSqlQuery qryID(db) ;
     qryID.exec(QString("SELECT estates.ID FROM estates Where estates.اسم_رمزى_للعقار='%1'").arg(estate));
@@ -270,7 +297,7 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 
     db.open();
     QString sql = QString("SELECT renters.رقم_الوحدة FROM estates , renters WHERE renters.estatesID=%1 and renters.نوع_العين_المؤجرة='%2' and renters.رقم_الوحدة=%3").arg(QString::number(ID),unitType,QString::number(unitNumber)) ;
-    QSqlQuery qry;
+    QSqlQuery qry(db);
 
     if (unitType == "شقة"){
         db.open();
@@ -278,6 +305,7 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
         qry.next();
         if (qry.record().value(0).toInt() == unitNumber){
             db.close();
+            QSqlDatabase::removeDatabase("conn");
             return true;
         }
     }else if (unitType == "محل"){
@@ -286,12 +314,13 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
         qry.next();
         if (qry.record().value(0).toInt() == unitNumber){
             db.close();
+            QSqlDatabase::removeDatabase("conn");
             return true;
         }
     }
     db.close();
+    QSqlDatabase::removeDatabase("conn");
     return false;
-
 }
 
 /************************/
@@ -300,6 +329,8 @@ bool database::checkDuplicatedUnitNumber(QString estate ,QString unitType , int 
 /*****Renters Records*****/
 double database::getRenterRentRemaining (QString estate , QString renter , QString month , double year )
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -338,6 +369,7 @@ double database::getRenterRentRemaining (QString estate , QString renter , QStri
     if (remaining > 0){
         return remaining ;
     }
+    QSqlDatabase::removeDatabase("conn");
     return 0;
 }
 /*************************/
@@ -345,6 +377,8 @@ double database::getRenterRentRemaining (QString estate , QString renter , QStri
 /********Money Records********/
 void database::MoneyRecord (QList<QString> textData , QList<double> doubleData , QList<int> intData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -398,10 +432,13 @@ void database::MoneyRecord (QList<QString> textData , QList<double> doubleData ,
     db.exec(sql);
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 void database::MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -435,9 +472,12 @@ void database::MoneyRecordUnclassified (QList<QString> textData , QList<double> 
     db.exec(sql);
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 void database::deleteWaterInvoiceValues(QString estate , QString month , int year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -453,10 +493,13 @@ void database::deleteWaterInvoiceValues(QString estate , QString month , int yea
     db.exec(sql);
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 void database::deleteWaterInvoiceMoneyRecords(QString estate , QString month , int year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -472,10 +515,13 @@ void database::deleteWaterInvoiceMoneyRecords(QString estate , QString month , i
     db.exec(sql);
     db.commit();
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 double database::calculationForRenterWaterInvoiceValue (QString estate , QString month , int year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -545,11 +591,13 @@ double database::calculationForRenterWaterInvoiceValue (QString estate , QString
     }
     db.commit();
     db.close();
-
+    QSqlDatabase::removeDatabase("conn");
 }
 
 double database::getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID from estates table
     db.open();
     QSqlQuery qryEstateID(db);
@@ -598,6 +646,7 @@ double database::getRenterWaterInvoiceRemaining(QString estate , QString renter 
     if ( remaining > 0){
         return remaining;
     }
+    QSqlDatabase::removeDatabase("conn");
     return 0 ;
 }
 
@@ -606,9 +655,11 @@ double database::getRenterWaterInvoiceRemaining(QString estate , QString renter 
 /***** Water Invoce Records*****/
 void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //record in water_invoice table
     db.open();
-    QSqlQuery qryEstateID;
+    QSqlQuery qryEstateID(db);
     qryEstateID.prepare(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(textDate[0]));
     qryEstateID.exec();
     qryEstateID.next();
@@ -628,9 +679,13 @@ void database::waterInvoiceRecord (QList<QString> textDate , QList<double> doubl
                 QString::number(doubleDate[0]));
     db.exec(sql);
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
+
 void database::waterInvoiceEditRecord (QList<QString> textDate , QList<double> doubleDate , QList<int> intData)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estate id
     db.open();
     QSqlQuery qryEstateID(db) ;
@@ -645,10 +700,13 @@ void database::waterInvoiceEditRecord (QList<QString> textDate , QList<double> d
     qry.exec(QString("UPDATE water_invoice SET قيمة_الفاتورة=%1 WHERE estatesID=%2 and عن_شهر='%3' and سنة=%4").arg\
              (QString::number(doubleDate[0]),estateID,textDate[1],QString::number(intData[2])));
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 
 }
 bool database::checkDuplicatedInvoice(QString estate , QString month , QString year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estatesID from estates Name
     db.open();
     QSqlQuery qryEstateID(db);
@@ -666,10 +724,13 @@ bool database::checkDuplicatedInvoice(QString estate , QString month , QString y
         return true;
     }
     db.close();
+    QSqlDatabase::removeDatabase("conn");
     return false;
 }
 void database::setRegisterdMonthList (QString estate , QString year , QComboBox  *monthComboList)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QSqlQuery qryEstateID(db);
     qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
@@ -698,16 +759,24 @@ void database::setRegisterdMonthList (QString estate , QString year , QComboBox 
         }
     }
     monthComboList->addItems(monthsRecoededInOrder);
+    QSqlDatabase::removeDatabase("conn");
 }
+
 void database::waterInvoiceDeleteRecord (QString month , QString year)
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QSqlQuery qry(db);
     qry.exec(QString("DELETE FROM water_invoice WHERE عن_شهر='%1' and سنة=%2").arg(month, year));
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
+
 void database::setMoneyValue (QString estate, QString  month , QString year , QDoubleSpinBox *moneyValue )
 {
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     //get estateID
     db.open();
     QSqlQuery qryEstateID (db);
@@ -725,6 +794,7 @@ void database::setMoneyValue (QString estate, QString  month , QString year , QD
     moneyValue->setValue(x);
 
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 /*******************************/
 
@@ -732,14 +802,17 @@ void database::setMoneyValue (QString estate, QString  month , QString year , QD
 /**********************************/
 
 void database::setTestModel(QTreeView *resultTable , QString tableName){
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
     db.open();
     QSqlQueryModel  *model = new QSqlQueryModel();
-    QSqlQuery *qry = new QSqlQuery(db);
-    qry->exec(QString("SELECT * FROM %1").arg(tableName));
-    model->setQuery(*qry);
+    QSqlQuery qry(db);
+    qry.exec(QString("SELECT * FROM %1").arg(tableName));
+    model->setQuery(qry);
     resultTable->setModel(model);
     //resultTable->setColumnHidden(0,true);
     db.close();
+    QSqlDatabase::removeDatabase("conn");
 }
 
 

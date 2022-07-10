@@ -11,7 +11,6 @@ class database
 {
 private:
     QString databaseFile;  
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     void createDatebaseTabels();
 
 public:
