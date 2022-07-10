@@ -5,7 +5,7 @@
 #include <QDir>
 #include "validation.h"
 #include "about.h"
-#include "queryresult.h"
+#include "queryResult.h"
 #include "waterinvoice.h"
 
 #include <QSqlDatabase>
@@ -127,6 +127,7 @@ void MainWindow::on_menuAboutApp_triggered()
 void MainWindow::on_tabWidgetMain_currentChanged(int index)
 {
     actionEmptyAllTabs();
+    actionMoneyValueChanges();
 }
 
 /************************************************/
@@ -232,8 +233,7 @@ void MainWindow::on_checkBoxQueryRenter_stateChanged(int arg1)
 
 void MainWindow::on_buttonQuery_clicked()
 {
-    actionValidationQuery();
-    actionShowQueryResult();
+
 }
 
 void MainWindow::on_comboBoxQueryEstate_currentIndexChanged(int index)
@@ -252,9 +252,7 @@ void MainWindow::defaultMoneyTabUI()
     ui->radioWithdraw->setDisabled(true);
     ui->comboBoxMonyMonth->addItems(database::months);
 
-    database db(databaseFilePath);
-    double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value());
-    ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+    actionSetRemainingRemainingValue();
 }
 
 void MainWindow::setMoneyTabFieldsStatus(bool state)
@@ -425,15 +423,16 @@ void MainWindow:: actionaAddMoneyRecord()
             if (opreationType == 0){//rent
                 double rentRemaining  = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
                 if (!rentRemaining){
-                    QMessageBox::information(this,"خطأ فى البيانات المسجلة", "الايجار المستحق مدفوع بالفعل");
+                    QMessageBox::warning(this,"خطأ فى البيانات المسجلة", "الايجار المستحق مدفوع بالفعل");
                 }else if (ui->doubleSpinBoxMony->value() > rentRemaining){
                     QMessageBox::warning(this,"خطأ فى المعلومات المسجلة" , "القيمة المستحقة للسداد لهذا المستأجر : " + QString::number(rentRemaining) + " جنية");
                 }else {
                     db.MoneyRecord(textDate , doubleData , intData);
                     QMessageBox::information(this,"حالة العملية", "تم الحفظ");
-                    actionButtonMoneyEmpty();
                     actionMoneyValueChanges();
                 }
+                ui->dateEditMoneyDate->setDate(QDate::currentDate());
+                ui->doubleSpinBoxMony->setValue(0);
                 ui->comboBoxMoneyType->setCurrentIndex(0);
 
             }else if(opreationType == 1){// water
@@ -448,7 +447,8 @@ void MainWindow:: actionaAddMoneyRecord()
                }else {
                     db.MoneyRecord(textDate , doubleData , intData);
                     QMessageBox::information(this,"حالة العملية", "تم الحفظ");
-                    actionButtonMoneyEmpty();
+                    ui->dateEditMoneyDate->setDate(QDate::currentDate());
+                    ui->doubleSpinBoxMony->setValue(0);
                     ui->comboBoxMoneyType->setCurrentIndex(1);
                }
             }else if(opreationType == 2){// maintenance
@@ -528,6 +528,7 @@ void MainWindow::on_buttonMoneyWaterInvoice_clicked()
 
 void MainWindow::on_comboBoxMoneyEstate_currentIndexChanged(int index)
 {
+    actionButtonMoneyEmpty();
     actionRentersFiledsFromDatabase("MONEY");
 }
 
@@ -548,7 +549,6 @@ void MainWindow::on_comboBoxMonyMonth_currentIndexChanged(int index)
 
 void MainWindow::on_comboBoxMoneyRenter_currentIndexChanged(int index)
 {
-    actionButtonMoneyEmpty();
     actionMoneyValueChanges();
 }
 
@@ -779,10 +779,8 @@ void MainWindow::clearEstatesFields()
     defaultSetupUI();
 }
 
-
-
-
-
-
-
+void MainWindow::on_menuViewAllData_triggered()
+{
+    actionShowQueryResult();
+}
 

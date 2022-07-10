@@ -127,6 +127,8 @@ private slots:
 
 
 
+    void on_menuViewAllData_triggered();
+
 public slots:
     void updataMoneyMonthList();
     //will be removed

@@ -2606,7 +2606,14 @@
     <addaction name="menuAboutApp"/>
     <addaction name="menuAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>عرض</string>
+    </property>
+    <addaction name="menuViewAllData"/>
+   </widget>
    <addaction name="menu"/>
+   <addaction name="menuView"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -2633,6 +2640,11 @@
   <action name="menuImport">
    <property name="text">
     <string>استيراد</string>
+   </property>
+  </action>
+  <action name="menuViewAllData">
+   <property name="text">
+    <string>جداول البيانات</string>
    </property>
   </action>
  </widget>
