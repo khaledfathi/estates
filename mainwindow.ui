@@ -1773,6 +1773,9 @@
               <height>30</height>
              </size>
             </property>
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
             <item>
              <property name="text">
               <string>قانون قديم</string>

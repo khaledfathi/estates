@@ -518,7 +518,7 @@ void database::deleteWaterInvoiceMoneyRecords(QString estate , QString month , i
     QSqlDatabase::removeDatabase("conn");
 }
 
-double database::calculationForRenterWaterInvoiceValue (QString estate , QString month , int year)
+bool database::calculationForRenterWaterInvoiceValue (QString estate , QString month , int year)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
     db.setDatabaseName(databaseFile);
@@ -546,6 +546,7 @@ double database::calculationForRenterWaterInvoiceValue (QString estate , QString
     qryUnits.next();
     int unitsCounts = qryUnits.record().value(0).toInt();
     db.close();
+    if (unitsCounts == 0) return false; //IF NO UNITS IN THIS ESTATES
 
     //get all units water pay percentage from renter table for current estate
     db.open();
@@ -592,6 +593,7 @@ double database::calculationForRenterWaterInvoiceValue (QString estate , QString
     db.commit();
     db.close();
     QSqlDatabase::removeDatabase("conn");
+    return true;
 }
 
 double database::getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year)
@@ -862,7 +864,77 @@ QList<double> database::QueryActualMoney (QString estate)
     results.push_back(SumOfunclassified);
     results.push_back(SumOfunclassifiedOwner);
     results.push_back(total);
+    QSqlDatabase::removeDatabase("conn");
     return results;
+}
+
+QList<QList<QString>> database::QueryWaterIndebtednessTable(QString estate)
+{
+    QList<QList<QString>> resultTabel={}; //return value
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get all renters IDs from estates table
+    db.open();
+    QSqlQuery qryRenterIDs(db);
+    qryRenterIDs.exec(QString("SELECT ID FROM renters WHERE estatesID=%1").arg(estateID));
+    QList<QString> renterIDs;
+    while(qryRenterIDs.next()){
+        renterIDs.push_back(qryRenterIDs.record().value(0).toString());
+    }
+    db.close();
+
+
+    //get water invoice money require for each renter
+    db.open();
+    QSqlQuery qryMoneyRequiteForRenter(db);
+    QList<QString> renterNamesAndWaterInvoice ;
+    for (int i=0 ; i<renterIDs.size(); i++){//search by renter IDs for each renter
+
+        qryMoneyRequiteForRenter.exec(QString("SELECT renters.اسم_المستأجر FROM renters WHERE ID=%1").arg(renterIDs[i]));
+        qryMoneyRequiteForRenter.next();
+        renterNamesAndWaterInvoice.push_back(qryMoneyRequiteForRenter.record().value(0).toString());
+
+        qryMoneyRequiteForRenter.exec(QString("SELECT SUM(water_invoice_values.المبلغ_المطلوب)  FROM  water_invoice_values WHERE estatesID=%1 and  rentersID=%2").arg(estateID , renterIDs[i]));
+        qryMoneyRequiteForRenter.next();
+        renterNamesAndWaterInvoice.push_back(QString::number(qryMoneyRequiteForRenter.record().value(0).toDouble()));
+
+        resultTabel.push_back(renterNamesAndWaterInvoice);
+        renterNamesAndWaterInvoice.clear();
+    }
+
+    db.close();
+
+    //get water invoice money paid for each renter
+    db.open();
+    QSqlQuery qryMoneyPaidForRenter(db);
+
+    for (int i=0 ; i<renterIDs.size(); i++){//search by renter IDs for each renter
+        qryMoneyPaidForRenter.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2").arg(estateID , renterIDs[i]));
+        qryMoneyPaidForRenter.next();
+        resultTabel[i].push_back(QString::number(qryMoneyPaidForRenter.record().value(0).toDouble()));
+    }
+    db.close();
+
+    QSqlDatabase::removeDatabase("conn");
+
+    //set calculation for return
+    QList<QList<QString>> table ;
+    QString txt = "";
+    for (int i=0; i<resultTabel.size(); i++){
+        table+={resultTabel[i][0],\
+                QString::number(resultTabel[i][1].toDouble() - resultTabel[i][2].toDouble())};
+        txt += table[i][0]+" | "+ table[i][1] + "\n";
+    }
+    return  table;
 }
 /******************************/
 

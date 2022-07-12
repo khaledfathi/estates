@@ -637,7 +637,7 @@ void MainWindow::actionButtonRenterEmpty()
     ui->spinBoxRenterMoneyValue->clear();
     ui->dateEditContract->setDate(QDate::currentDate());
     ui->dateEditContractEnd->setDate(QDate::currentDate());
-    ui->comboBoxContractType->setCurrentIndex(0);
+    ui->comboBoxContractType->setCurrentIndex(1);
     ui->spinBoxRenterPercent->setValue(100);
 }
 

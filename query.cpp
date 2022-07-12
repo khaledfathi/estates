@@ -23,8 +23,8 @@ query::~query()
 /************/
 void query::results()
 {
+    QString estate = data[0];
     if (data[1] == "المبلغ الفعلى"){
-        QString estate = data[0];
         database db(databaseFilePath);
         QList<double> results = db.QueryActualMoney(estate);
 
@@ -47,8 +47,29 @@ void query::results()
             ui->tableWidgetResultsTabel->setItem(i,1 , new QTableWidgetItem(QString::number(results[i])) );
         }
         ui->labelResultValue->setText(QString("الاجمالى  :  %1 جنية").arg(QString::number(results[5])));
+    }else if ((data[1] == "مديونية الايجار")){
 
+    }else if ((data[1] == "مديونية المياة")){
+        database db(databaseFilePath);
+        QList<QList<QString>>  waterIndebtednessTable =  db.QueryWaterIndebtednessTable(data[0]);
 
+        ui->tableWidgetResultsTabel->setColumnCount(2);
+        ui->tableWidgetResultsTabel->setHorizontalHeaderItem(0,new QTableWidgetItem("اسم المستأجر"));
+        ui->tableWidgetResultsTabel->setHorizontalHeaderItem(1,new QTableWidgetItem("مديونية"));
+        ui->tableWidgetResultsTabel->verticalHeader()->setVisible(false);
+
+        ui->tableWidgetResultsTabel->setRowCount(waterIndebtednessTable.size());
+        ui->tableWidgetResultsTabel->setColumnWidth(0,300);
+        ui->tableWidgetResultsTabel->setColumnWidth(1,200);
+        for (int i=0 ; i<waterIndebtednessTable.size();i++){
+            ui->tableWidgetResultsTabel->setItem(i,0,new QTableWidgetItem(waterIndebtednessTable[i][0]));
+            ui->tableWidgetResultsTabel->setItem(i,1,new QTableWidgetItem(waterIndebtednessTable[i][1]));
+        }
+        double total =0;
+        for (int i=0; i<waterIndebtednessTable.size(); i++) {
+            total += waterIndebtednessTable[i][1].toDouble();
+        }
+        ui->labelResultValue->setText("الاجمالى "+QString::number(total)+" جنية");
     }
 
 }

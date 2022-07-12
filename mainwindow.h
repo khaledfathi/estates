@@ -128,8 +128,6 @@ private slots:
 
 
 
-
-
 public slots:
     void updataMoneyMonthList();
     //will be removed

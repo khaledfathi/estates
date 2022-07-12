@@ -60,12 +60,9 @@ private slots:
     void on_buttonSave_clicked();
     void on_buttonDelete_clicked();
     void on_comboBoxEstate_currentIndexChanged(int index);
-
-
-
-    void on_comboBoxMonth_activated(int index);
-
+    void on_comboBoxMonth_currentIndexChanged(int index);
     void on_spinBoxYear_valueChanged(int arg1);
+
 
 private:
     Ui::waterInvoice *ui;

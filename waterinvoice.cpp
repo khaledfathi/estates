@@ -88,8 +88,11 @@ void waterInvoice::actionSetInvoiceMonthAndtValues()
 
 void waterInvoice::actionSetMonyValue()
 {
-    database db(databaseFilePath);
-    db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()) , ui->doubleSpinBoxInvoceValue);
+    if (ui->radioEditInvoice->isChecked()){
+        database db(databaseFilePath);
+        db.setMoneyValue(ui->comboBoxEstate->currentText() , ui->comboBoxMonth->currentText() , QString::number(ui->spinBoxYear->value()) , ui->doubleSpinBoxInvoceValue);
+    }
+
 }
 
 void waterInvoice::actionUIChangesForEdit()
@@ -127,8 +130,12 @@ void waterInvoice::actionAddWaterInvoiceRecord()
                 QMessageBox::warning(this , "خطأ فى البيانات المسجلة" , message);
             }else{
                 db.waterInvoiceRecord(textData , doubleData , intData);
-                db.calculationForRenterWaterInvoiceValue(estate , month , ui->spinBoxYear->value());
-                QMessageBox::information(this , "حالة العملية" , "تم الحفظ");
+                if (!db.calculationForRenterWaterInvoiceValue(estate , month , ui->spinBoxYear->value())){
+                    db.waterInvoiceDeleteRecord(month , year);
+                    QMessageBox::warning(this , "حالة العملية" ,"لن يتم حفظ الفاتورة\nلا يوجد مستأجرين فى هذا العقار لتقسيم القيمة عليهم !");
+                }else {
+                    QMessageBox::information(this , "حالة العملية" , "تم الحفظ");
+                }
                 ui->doubleSpinBoxInvoceValue->setValue(0);
             }
         }else if (ui->radioEditInvoice->isChecked()){
@@ -201,10 +208,11 @@ void waterInvoice::on_comboBoxEstate_currentIndexChanged(int index)
     actionSetInvoiceMonthAndtValues();
 }
 
-void waterInvoice::on_comboBoxMonth_activated(int index)
+void waterInvoice::on_comboBoxMonth_currentIndexChanged(int index)
 {
     actionSetMonyValue();
 }
+
 
 void waterInvoice::on_spinBoxYear_valueChanged(int arg1)
 {
@@ -212,6 +220,7 @@ void waterInvoice::on_spinBoxYear_valueChanged(int arg1)
 }
 
 /******************************************/
+
 
 
 

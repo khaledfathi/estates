@@ -44,7 +44,7 @@ public:
     void MoneyRecordUnclassified (QList<QString> textData , QList<double> doubleData , QList<int> intData);
     void deleteWaterInvoiceValues(QString estate , QString month , int year);
     void deleteWaterInvoiceMoneyRecords(QString estate, QString month , int year);
-    double calculationForRenterWaterInvoiceValue (QString estate , QString month , int year);
+    bool calculationForRenterWaterInvoiceValue (QString estate , QString month , int year);
     double getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year);
     /************************/
 
@@ -59,6 +59,7 @@ public:
 
     /******* Query Dialog *********/
     QList<double> QueryActualMoney (QString estate);
+    QList<QList<QString>> QueryWaterIndebtednessTable(QString estate);
     /******************************/
 
      //**** TEST ****
