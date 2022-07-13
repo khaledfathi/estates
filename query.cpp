@@ -57,19 +57,35 @@ void query::results()
         ui->tableWidgetResultsTabel->setHorizontalHeaderItem(0,new QTableWidgetItem("اسم المستأجر"));
         ui->tableWidgetResultsTabel->setHorizontalHeaderItem(1,new QTableWidgetItem("مديونية"));
         ui->tableWidgetResultsTabel->verticalHeader()->setVisible(false);
-
-        ui->tableWidgetResultsTabel->setRowCount(waterIndebtednessTable.size());
         ui->tableWidgetResultsTabel->setColumnWidth(0,300);
         ui->tableWidgetResultsTabel->setColumnWidth(1,200);
-        for (int i=0 ; i<waterIndebtednessTable.size();i++){
-            ui->tableWidgetResultsTabel->setItem(i,0,new QTableWidgetItem(waterIndebtednessTable[i][0]));
-            ui->tableWidgetResultsTabel->setItem(i,1,new QTableWidgetItem(waterIndebtednessTable[i][1]));
+        if (renterChecked){
+            for (int i=0; i<waterIndebtednessTable.size(); i++){
+                if (data[4] == waterIndebtednessTable[i][0]){
+                    ui->tableWidgetResultsTabel->setRowCount(1);
+                    ui->tableWidgetResultsTabel->setItem(0,0,new QTableWidgetItem(waterIndebtednessTable[i][0]));
+                    ui->tableWidgetResultsTabel->setItem(0,1,new QTableWidgetItem(waterIndebtednessTable[i][1]));
+                    ui->labelResultValue->setText("الاجمالى "+waterIndebtednessTable[i][1]+" جنية");
+
+                }
+            }
+
+        }else{
+
+            ui->tableWidgetResultsTabel->setRowCount(waterIndebtednessTable.size());
+
+            for (int i=0 ; i<waterIndebtednessTable.size();i++){
+                ui->tableWidgetResultsTabel->setItem(i,0,new QTableWidgetItem(waterIndebtednessTable[i][0]));
+                ui->tableWidgetResultsTabel->setItem(i,1,new QTableWidgetItem(waterIndebtednessTable[i][1]));
+            }
+            double total =0;
+            for (int i=0; i<waterIndebtednessTable.size(); i++) {
+                total += waterIndebtednessTable[i][1].toDouble();
+            }
+            ui->labelResultValue->setText("الاجمالى "+QString::number(total)+" جنية");
+
         }
-        double total =0;
-        for (int i=0; i<waterIndebtednessTable.size(); i++) {
-            total += waterIndebtednessTable[i][1].toDouble();
-        }
-        ui->labelResultValue->setText("الاجمالى "+QString::number(total)+" جنية");
+
     }
 
 }
