@@ -2,6 +2,7 @@
 #include <QString>
 #include <QList>
 #include <QDate>
+#include <QMessageBox>
 
 validation::validation()
 {
@@ -74,6 +75,15 @@ QString validation::renterValidation(QList<QString> data)
     }
     if (data[7] == data[8]){
         message+= "لا يمكن ان يكون تاريخ العقد وانتهاءة متطابقين\n";
+    }
+    QDate dateFrom = QDate::fromString(data[7] , "yyyy/M/d");
+    QDate dateTo = QDate::fromString(data[8] , "yyyy/M/d");
+    QDate lastPaidRentDate = QDate::fromString(data[12]+"/"+data[11]+"/1","yyyy/M/d");
+
+    if ( (lastPaidRentDate.year() < dateFrom.year() || lastPaidRentDate.year() > dateTo.year()) ||\
+         ((lastPaidRentDate.year() == dateFrom.year()) && lastPaidRentDate.month() < dateFrom.month() )||\
+         ((lastPaidRentDate.year() == dateTo.year()) && lastPaidRentDate.month() > dateTo.month() ) ){
+            message+= "تاريخ الفواتير المسددة يقع بين شهر " + QString::number(dateFrom.month())+"/"+QString::number(dateFrom.year())+" الى "+QString::number(dateTo.month())+"/"+QString::number(dateTo.year()) +"\n";
     }
     return message;
 }

@@ -2,6 +2,7 @@
 #include <QDir>
 #include <QSqlRecord>
 #include <QMessageBox>
+#include <QDate>
 
 QList<QString> database::months ={\
     "1- يناير",\
@@ -58,6 +59,8 @@ void database::createDatebaseTabels()
                         \"تاريخ_انتهاء_العقد\" TEXT NOT NULL,\
                         \"نوع_العقد\"     TEXT NOT NULL,\
                         \"نسبة_مئوية_للمياة\" INTEGER NOT NULL,\
+                        \"اخر_شهر_مدفوع\"     TEXT NOT NULL,\
+                        \"سنة\" INTEGER NOT NULL,\
                         PRIMARY KEY(\"ID\" AUTOINCREMENT),\
                         FOREIGN KEY (\"estatesID\") REFERENCES estates(\"ID\")\
                 );"\
@@ -232,8 +235,10 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
             تاريخ_العقد,\
             تاريخ_انتهاء_العقد,\
             نوع_العقد,\
-            نسبة_مئوية_للمياة\
-            )VALUES(%1,%2,'%3','%4','%5','%6',%7,'%8','%9','%10',%11)";
+            نسبة_مئوية_للمياة,\
+            اخر_شهر_مدفوع,\
+            سنة\
+            )VALUES(%1,%2,'%3','%4','%5','%6',%7,'%8','%9','%10',%11,'%12',%13)";
     sql = sql.arg(estatesID,\
             QString::number(digitData[0]),\
             textData[1],\
@@ -244,7 +249,10 @@ void database::RenterRecord (QList<QString> textData , QList<int> digitData)
             textData[5],\
             textData[6],\
             textData[7],\
-            QString::number(digitData[2]));
+            QString::number(digitData[2]),\
+            textData[8],\
+            QString::number(digitData[3]));
+
     db.exec(sql);
 
     db.commit();
@@ -651,6 +659,65 @@ double database::getRenterWaterInvoiceRemaining(QString estate , QString renter 
     QSqlDatabase::removeDatabase("conn");
     return 0 ;
 }
+
+QList<QString> database::avaliblePayMonthsForRenter(QString estate , QString renter ,  int year)
+{
+    QList<QString> validMonths={}; //return list
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get renterID from rentertable
+    db.open();
+    QSqlQuery qryRenterID(db);
+    qryRenterID.exec(QString("SELECT renters.ID from renters WHERE renters.اسم_المستأجر='%1'").arg(renter));
+    qryRenterID.next();
+    QString RenterID= qryRenterID.record().value(0).toString();
+    db.close();
+
+    //avalible dates [contract (start and end date)] and last paid month and year - for this renter
+    db.open();
+    QSqlQuery qryAvalibleDates(db);
+    qryAvalibleDates.exec(QString("SELECT renters.تاريخ_العقد , renters.تاريخ_انتهاء_العقد , renters.اخر_شهر_مدفوع , renters.سنة FROM renters WHERE estatesID=%1 and ID=%2").arg(estateID , RenterID));
+    qryAvalibleDates.next();
+    QString contractDate = qryAvalibleDates.record().value(0).toString();
+    QString contractEndDate = qryAvalibleDates.record().value(1).toString();
+    int lastPaidMonth = qryAvalibleDates.record().value(2).toInt();
+    int lastPaidYear = qryAvalibleDates.record().value(3).toInt();
+    db.close();
+
+
+    if ( (year < lastPaidYear) || (year > QDate::fromString(contractEndDate,"yyyy/M/d").year()) ){
+        validMonths.clear();
+    }else if ( year == lastPaidYear){
+        for (int i =months.size(); i>=0 ; i-- ){
+            if ( lastPaidMonth >= i+1 ){
+                for (int j=i; j<11; j++){ //11 is months count 12-1 , -1 because it alredy paid with no value record in database
+                        validMonths.push_back(months[j+1]);
+                }
+                break;
+            }
+        }
+    }else if ( year == QDate::fromString(contractEndDate,"yyyy/M/d").year() ){
+        for (int i =0; i<months.size(); i++ ){
+            if ( QDate::fromString(contractDate,"yyyy/M/d").month() >= i+1 ){
+                validMonths.push_back(months[i]);
+            }
+        }
+
+    }else {
+        validMonths = months;
+    }
+
+    return validMonths;
+}
+
 
 /****************************/
 

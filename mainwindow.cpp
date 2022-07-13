@@ -49,6 +49,9 @@ void MainWindow::setCurrentDateUI(){
     ui->dateEditQueryDateTo->setDate(QDate::currentDate());
     ui->spinBoxMoneyYear->setValue(QDate::currentDate().year());
     ui->spinBoxReceiptYear->setValue(QDate::currentDate().year());
+    ui->comboBoxLastPaidRentMonth->addItems(database::months);
+    ui->comboBoxLastPaidRentMonth->setCurrentIndex(QDate::currentDate().month()-1); //select current month is past month
+    ui->spinBoxLastPaidRentYear->setValue(QDate::currentDate().year());
 }
 /*************************************/
 
@@ -397,12 +400,17 @@ void MainWindow::actionMoneyTypeListChanges()
         ui->labelMoneyRemaining->setHidden(false);
         ui->doubleSpinBoxMoneyRemaining->setHidden(false);
         ui->radioWithdraw->setDisabled(true);
-        ui->comboBoxMonyMonth->clear();
-        ui->comboBoxMonyMonth->addItems(database::months);
+
 
         database db(databaseFilePath);
         double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText(), ui->spinBoxMoneyYear->value());
         ui->doubleSpinBoxMoneyRemaining->setValue(remaining);
+
+        //get avalible months to pay for current renter
+        QList<QString>validMonths =  db.avaliblePayMonthsForRenter(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText()  , ui->spinBoxMoneyYear->value() );
+        ui->comboBoxMonyMonth->clear();
+        ui->comboBoxMonyMonth->addItems(validMonths);
+
 
     }else{
         ui->comboBoxMonyMonth->setDisabled(false);
@@ -607,6 +615,9 @@ QList<QString> MainWindow::getDateRenter()
     data.push_back(ui->dateEditContractEnd->date().toString("yyyy/M/d"));
     data.push_back(ui->comboBoxContractType->currentText());
     data.push_back(QString::number(ui->spinBoxRenterPercent->value()));
+    data.push_back(QString::number(ui->comboBoxLastPaidRentMonth->currentIndex()+1));// month as a number
+    data.push_back(QString::number(ui->spinBoxLastPaidRentYear->value()));
+
     return data;
 }
 
@@ -620,10 +631,12 @@ void MainWindow::getRenterRecord(QList<QString> *textData , QList<int> *digitDat
     textData->push_back(ui->dateEditContract->date().toString("yyyy/M/d"));
     textData->push_back(ui->dateEditContractEnd->date().toString("yyyy/M/d"));
     textData->push_back(ui->comboBoxContractType->currentText());
+    textData->push_back(ui->comboBoxLastPaidRentMonth->currentText());
 
     digitData->push_back(ui->spinBoxRenterUnitNumber->value());
     digitData->push_back(ui->spinBoxRenterMoneyValue->value());
     digitData->push_back(ui->spinBoxRenterPercent->value());
+    digitData->push_back(ui->spinBoxLastPaidRentYear->value());
 }
 
 //*** Actions for Renter Tab ***

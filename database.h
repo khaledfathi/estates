@@ -46,6 +46,7 @@ public:
     void deleteWaterInvoiceMoneyRecords(QString estate, QString month , int year);
     bool calculationForRenterWaterInvoiceValue (QString estate , QString month , int year);
     double getRenterWaterInvoiceRemaining(QString estate , QString renter , QString month , int year);
+    QList<QString> avaliblePayMonthsForRenter(QString estate , QString renter  , int year);
     /************************/
 
     /***** Water Invoce Records*****/
