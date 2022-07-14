@@ -57,6 +57,7 @@ public:
     void actionaAddMoneyRecord();
     void actionSetRemainingRemainingValue();
     void actionMoneyValueChanges();
+    void actionSetValidMonthsForRenter();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
@@ -78,6 +79,10 @@ public:
     /************************************************/
 
     /************* Recipet Tab Section ***************/
+    void defaultReceiptTabUI();
+    //*** Actions
+    void actionRecipetChangesYear();
+
     /************************************************/
 
 
@@ -123,8 +128,12 @@ private slots:
 
     //*** SIGNAL AND SLOT for Recipet Tab***
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
+    void on_spinBoxReceiptYear_valueChanged(int arg1);
 
     //*** For Testing ***
+
+
+
 
 
 

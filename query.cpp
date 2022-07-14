@@ -48,6 +48,13 @@ void query::results()
         }
         ui->labelResultValue->setText(QString("الاجمالى  :  %1 جنية").arg(QString::number(results[5])));
     }else if ((data[1] == "مديونية الايجار")){
+        database db(databaseFilePath);
+        QList<QList<QString>>  rentIndebtednessTable =  db.QueryRentIndebtednessTable(data[0]);
+        //مدة الايجار لكل مستأجر - من تاريخ اخر شهر مدفوع+1 الى التاريخ الحالى
+        // جمع كل الايجارات السابقة فى متغير - وسيكون هذا هو المبلغ الكلى المطلوب
+        //يتم جمع كل الايجارات المسددة
+        //الناتج هو طرح كل البند الاول - البند الثانى
+
 
     }else if ((data[1] == "مديونية المياة")){
         database db(databaseFilePath);

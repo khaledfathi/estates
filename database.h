@@ -61,6 +61,7 @@ public:
     /******* Query Dialog *********/
     QList<double> QueryActualMoney (QString estate);
     QList<QList<QString>> QueryWaterIndebtednessTable(QString estate);
+    QList<QList<QString>> QueryRentIndebtednessTable(QString estate);
     /******************************/
 
      //**** TEST ****

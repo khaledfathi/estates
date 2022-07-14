@@ -39,6 +39,7 @@ void MainWindow::defaultSetupUI(){
     actionRentersFiledsFromDatabase("QUERY");
     defaultQueryTabUI();
     defaultMoneyTabUI();
+    defaultReceiptTabUI();
 }
 
 void MainWindow::setCurrentDateUI(){
@@ -276,7 +277,6 @@ void MainWindow::defaultMoneyTabUI()
     ui->doubleSpinBoxMoneyRemaining->setHidden(false);
     ui->labelMoneyRemaining->setHidden(false);
     ui->radioWithdraw->setDisabled(true);
-    ui->comboBoxMonyMonth->addItems(database::months);
 
     actionSetRemainingRemainingValue();
 }
@@ -429,6 +429,11 @@ void MainWindow::actionSetMonthsDependOnYear()
         ui->comboBoxMonyMonth->clear();
         database db(databaseFilePath);
         db.setRegisterdMonthList(ui->comboBoxMoneyEstate->currentText() , QString::number(ui->spinBoxMoneyYear->value()) , ui->comboBoxMonyMonth);
+    }else if (ui->comboBoxMoneyType->currentText()== "سداد ايجار"){
+        ui->comboBoxMonyMonth->clear();
+        database db(databaseFilePath);
+        QList<QString> validMonths = db.avaliblePayMonthsForRenter(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->spinBoxMoneyYear->value());
+        ui->comboBoxMonyMonth->addItems(validMonths);
     }
 }
 
@@ -446,6 +451,8 @@ void MainWindow:: actionaAddMoneyRecord()
         getMoneyRecord(&textDate, &doubleData , &intData);
         database db(databaseFilePath);
         if (ui->checkBoxAddFreeMoney->isChecked()){ //Record [without] classification
+            textDate[4]="";
+            intData[3]=0;
             db.MoneyRecordUnclassified(textDate , doubleData , intData);
             QMessageBox::information(this,"حالة العملية", "تم الحفظ");
         }else { //Record [with] classification
@@ -483,12 +490,16 @@ void MainWindow:: actionaAddMoneyRecord()
                     ui->comboBoxMoneyType->setCurrentIndex(1);
                }
             }else if(opreationType == 2){// maintenance
+                textDate[4]="";
+                intData[3]=0;
                 db.MoneyRecord(textDate , doubleData , intData);
                 QMessageBox::information(this,"حالة العملية", "تم الحفظ");
                 actionButtonMoneyEmpty();
                 ui->comboBoxMoneyType->setCurrentIndex(2);
 
             }else if(opreationType == 3){//unclassiified
+                textDate[4]="";
+                intData[3]=0;
                 db.MoneyRecord(textDate , doubleData , intData);
                 QMessageBox::information(this,"حالة العملية", "تم الحفظ");
                 actionButtonMoneyEmpty();
@@ -515,9 +526,12 @@ void MainWindow::actionSetRemainingRemainingValue()
 
 void MainWindow::actionMoneyValueChanges()
 {
-    double value = ui->doubleSpinBoxMony->value();
+    //set months for rent for this renter
     database db(databaseFilePath);
+
+    double value = ui->doubleSpinBoxMony->value();
     if (ui->comboBoxMoneyType->currentText() == "سداد ايجار"){
+        //set remaining rent value for this renter
         double remaining = db.getRenterRentRemaining(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->comboBoxMonyMonth->currentText() , ui->spinBoxMoneyYear->value());
         if ( value > 0 ){
             ui->doubleSpinBoxMoneyRemaining->setValue(remaining-value);
@@ -535,6 +549,14 @@ void MainWindow::actionMoneyValueChanges()
     }
 
 }
+void MainWindow::actionSetValidMonthsForRenter()
+{
+    database db(databaseFilePath);
+    QList<QString> validMonths = db.avaliblePayMonthsForRenter(ui->comboBoxMoneyEstate->currentText() , ui->comboBoxMoneyRenter->currentText() , ui->spinBoxMoneyYear->value());
+    ui->comboBoxMonyMonth->clear();
+    ui->comboBoxMonyMonth->addItems(validMonths);
+}
+
 
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
@@ -579,7 +601,8 @@ void MainWindow::on_comboBoxMonyMonth_currentIndexChanged(int index)
 }
 
 void MainWindow::on_comboBoxMoneyRenter_currentIndexChanged(int index)
-{
+{   
+    actionSetValidMonthsForRenter();
     actionMoneyValueChanges();
 }
 
@@ -791,12 +814,29 @@ void MainWindow::on_buttonEstateSave_clicked()
 
 
 /************* Recipet Tab Section ***************/
+void MainWindow::defaultReceiptTabUI()
+{
+    database db(databaseFilePath);
+    QList<QString> validMonths = db.avaliblePayMonthsForRenter(ui->comboBoxRenterEstate->currentText(), ui->comboBoxReceiptRenter->currentText() , ui->spinBoxReceiptYear->value());
+    ui->comboBoxReceiptMonth->addItems(validMonths);
+}
 //*** Actions for RecipetTab ***
+void MainWindow::actionRecipetChangesYear()
+{
+    database db(databaseFilePath);
+    QList<QString> validMonths = db.avaliblePayMonthsForRenter(ui->comboBoxReceiptEstate->currentText() , ui->comboBoxReceiptRenter->currentText() , ui->spinBoxReceiptYear->value());
+    ui->comboBoxReceiptMonth->clear();
+    ui->comboBoxReceiptMonth->addItems(validMonths);
+}
 
 //*** SIGNAL AND SLOT for Recipet Tab***
 void MainWindow::on_comboBoxReceiptEstate_currentIndexChanged(int index)
 {
     actionRentersFiledsFromDatabase("RECIPET");
+}
+void MainWindow::on_spinBoxReceiptYear_valueChanged(int arg1)
+{
+    actionRecipetChangesYear();
 }
 /************************************************/
 
@@ -814,6 +854,4 @@ void MainWindow::clearEstatesFields()
 {
     defaultSetupUI();
 }
-
-
 

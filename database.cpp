@@ -688,10 +688,19 @@ QList<QString> database::avaliblePayMonthsForRenter(QString estate , QString ren
     qryAvalibleDates.next();
     QString contractDate = qryAvalibleDates.record().value(0).toString();
     QString contractEndDate = qryAvalibleDates.record().value(1).toString();
-    int lastPaidMonth = qryAvalibleDates.record().value(2).toInt();
+    QString lastPaidMonthString = qryAvalibleDates.record().value(2).toString();
+    int lastPaidMonth;
+    //convert month name to number
+    for (int i=0; i<months.size(); i++){
+        if(months[i] == lastPaidMonthString){
+            if (months[i] == lastPaidMonthString){
+                lastPaidMonth= i+1;
+                break;
+            }
+        }
+    }
     int lastPaidYear = qryAvalibleDates.record().value(3).toInt();
     db.close();
-
 
     if ( (year < lastPaidYear) || (year > QDate::fromString(contractEndDate,"yyyy/M/d").year()) ){
         validMonths.clear();
@@ -1002,6 +1011,68 @@ QList<QList<QString>> database::QueryWaterIndebtednessTable(QString estate)
         txt += table[i][0]+" | "+ table[i][1] + "\n";
     }
     return  table;
+}
+
+QList<QList<QString>> database::QueryRentIndebtednessTable(QString estate)
+{
+    QList<QList<QString>> resultTabel={}; //return value
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get all renters IDs from estates table
+    db.open();
+    QSqlQuery qryRenterIDs(db);
+    qryRenterIDs.exec(QString("SELECT ID FROM renters WHERE estatesID=%1").arg(estateID));
+    QList<QString> renterIDs;
+    while(qryRenterIDs.next()){
+        renterIDs.push_back(qryRenterIDs.record().value(0).toString());
+    }
+    db.close();
+
+    //get RenterID , and lastpaid month/year
+    db.open();
+    QSqlQuery qryDates(db);
+    QList<QList<QString>> datesQueryRusltes ={}; //each row  = renterID , last Paid Month ,last Paid year
+    QList<QString> tmp={};
+    for (int i=0; i<renterIDs.size() ; i++){
+        qryDates.exec(QString("SELECT renters.ID ,renters.تاريخ_انتهاء_العقد, renters.اخر_شهر_مدفوع ,renters.سنة  FROM renters WHERE  estatesID=%1 and ID=%2").arg(estateID , renterIDs[i]));
+        qryDates.next();
+        tmp.push_back(qryDates.record().value(0).toString());//renterID
+        tmp.push_back(QString::number(QDate::fromString(qryDates.record().value(1).toString(),"yyyy/M/d").month()));//ContractEndDate Month
+        tmp.push_back(qryDates.record().value(2).toString());//last Paid Month
+        tmp.push_back(qryDates.record().value(3).toString());//last Paid year
+        datesQueryRusltes.push_back(tmp);
+        tmp.clear();
+    }
+    db.close();
+
+
+    int currentMonth = QDate::currentDate().month();//currentDate Month
+    int currentYear = QDate::currentDate().year() ;//currentDate Year
+    for(int i=0; i<datesQueryRusltes.size(); i++){
+        int yearsCount  = currentYear - datesQueryRusltes[i][3].toInt();
+        int monthCountForFirstYear = datesQueryRusltes[i][1].toInt() ;
+        int monthCountForLasteYear = currentMonth ;
+
+        QMessageBox::information(nullptr , "" , QString::number(yearsCount));
+        QMessageBox::information(nullptr , "" , QString::number(monthCountForFirstYear));
+        QMessageBox::information(nullptr , "" , QString::number(monthCountForLasteYear));
+
+    }
+    //currentYear - lastPaidYear
+    //count months in current Year
+    //count months in lastPaidYear
+
+    QSqlDatabase::removeDatabase("conn");
+    return resultTabel;
 }
 /******************************/
 
