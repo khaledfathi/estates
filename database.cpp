@@ -994,7 +994,7 @@ QList<QList<QString>> database::QueryWaterIndebtednessTable(QString estate)
     QSqlQuery qryMoneyPaidForRenter(db);
 
     for (int i=0 ; i<renterIDs.size(); i++){//search by renter IDs for each renter
-        qryMoneyPaidForRenter.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2").arg(estateID , renterIDs[i]));
+        qryMoneyPaidForRenter.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2 and نوع_المعاملة='سداد مياة'").arg(estateID , renterIDs[i]));
         qryMoneyPaidForRenter.next();
         resultTabel[i].push_back(QString::number(qryMoneyPaidForRenter.record().value(0).toDouble()));
     }
@@ -1037,40 +1037,76 @@ QList<QList<QString>> database::QueryRentIndebtednessTable(QString estate)
     }
     db.close();
 
-    //get RenterID , and lastpaid month/year
+    //get RenterID , and lastpaid month/year and rent value
     db.open();
     QSqlQuery qryDates(db);
     QList<QList<QString>> datesQueryRusltes ={}; //each row  = renterID , last Paid Month ,last Paid year
     QList<QString> tmp={};
     for (int i=0; i<renterIDs.size() ; i++){
-        qryDates.exec(QString("SELECT renters.ID ,renters.تاريخ_انتهاء_العقد, renters.اخر_شهر_مدفوع ,renters.سنة  FROM renters WHERE  estatesID=%1 and ID=%2").arg(estateID , renterIDs[i]));
+        qryDates.exec(QString("SELECT renters.ID , renters.اخر_شهر_مدفوع ,renters.سنة  ,renters.قيمة_الايجار ,renters.اسم_المستأجر FROM renters WHERE  estatesID=%1 and ID=%2").arg(estateID , renterIDs[i]));
         qryDates.next();
         tmp.push_back(qryDates.record().value(0).toString());//renterID
-        tmp.push_back(QString::number(QDate::fromString(qryDates.record().value(1).toString(),"yyyy/M/d").month()));//ContractEndDate Month
-        tmp.push_back(qryDates.record().value(2).toString());//last Paid Month
-        tmp.push_back(qryDates.record().value(3).toString());//last Paid year
+        QString monthName = qryDates.record().value(1).toString();
+        for (int i = 0; i<months.size(); i++ ){//convert month name to number
+            if (months[i] == monthName){
+                tmp.push_back(QString::number(i+1));//last Paid Month
+                break;
+            }
+        }
+        tmp.push_back(qryDates.record().value(2).toString());//last Paid year
+        tmp.push_back(qryDates.record().value(3).toString());//rentValue
+        tmp.push_back(qryDates.record().value(4).toString());//renter name
         datesQueryRusltes.push_back(tmp);
         tmp.clear();
     }
     db.close();
 
-
+    //get rent  required values for each renter form lastpaid month/year to current month/year
     int currentMonth = QDate::currentDate().month();//currentDate Month
     int currentYear = QDate::currentDate().year() ;//currentDate Year
+    QList<int> moneyValueForEachRenter ;
     for(int i=0; i<datesQueryRusltes.size(); i++){
-        int yearsCount  = currentYear - datesQueryRusltes[i][3].toInt();
-        int monthCountForFirstYear = datesQueryRusltes[i][1].toInt() ;
-        int monthCountForLasteYear = currentMonth ;
+        int yearsCount  = currentYear - datesQueryRusltes[i][2].toInt();
+        int monthCountForFirstYear = (12-datesQueryRusltes[i][1].toInt()) ;
+        int monthCountForCurrentYear = currentMonth ;
+        int firstMonthNumber = datesQueryRusltes[i][1].toInt();
+        double rentValue = datesQueryRusltes[i][3].toDouble();
 
-        QMessageBox::information(nullptr , "" , QString::number(yearsCount));
-        QMessageBox::information(nullptr , "" , QString::number(monthCountForFirstYear));
-        QMessageBox::information(nullptr , "" , QString::number(monthCountForLasteYear));
-
+        if (!yearsCount  ){
+            moneyValueForEachRenter.push_back((monthCountForCurrentYear - (firstMonthNumber)) * rentValue );
+            //calc current months
+        }else if (yearsCount == 1 ){
+            moneyValueForEachRenter.push_back((monthCountForFirstYear * rentValue) +  (monthCountForCurrentYear * rentValue)) ;
+            //calc first months and last months
+        }else if (yearsCount == 2 ){
+            yearsCount = 1;
+            moneyValueForEachRenter.push_back((monthCountForFirstYear * rentValue) +  (yearsCount * 12 * rentValue) + (monthCountForCurrentYear * rentValue));
+            //calc first months and last months
+        }else if (yearsCount > 2 ){
+            yearsCount -= 2;
+            moneyValueForEachRenter.push_back((monthCountForFirstYear * rentValue) +  (yearsCount * 12 * rentValue) + (monthCountForCurrentYear * rentValue));
+        }
     }
-    //currentYear - lastPaidYear
-    //count months in current Year
-    //count months in lastPaidYear
 
+    //calculate indebtedness values
+    db.open();
+    QList<double> indebtednessValue ;
+    QSqlQuery qryRentindebtedness(db);
+    for (int i=0 ; i<renterIDs.size(); i++){
+        qryRentindebtedness.exec(QString("SELECT SUM(money.المبلغ_المدفوع) FROM money WHERE estatesID=%1 and rentersID=%2 and نوع_المعاملة='سداد ايجار'").arg(estateID,renterIDs[i]));
+        qryRentindebtedness.next();
+        indebtednessValue.push_back(qryRentindebtedness.record().value(0).toDouble());
+    }
+    db.close();
+
+    //set results [renter name , indebtedness values ]
+    QList<QString> row;
+    for (int i=0 ; i<datesQueryRusltes.size(); i++ ){
+        row.push_back(datesQueryRusltes[i][4]);
+        row.push_back(QString::number(moneyValueForEachRenter[i] - indebtednessValue[i]));
+        resultTabel.push_back(row);
+        row.clear();
+    }
     QSqlDatabase::removeDatabase("conn");
     return resultTabel;
 }

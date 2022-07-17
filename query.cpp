@@ -50,10 +50,39 @@ void query::results()
     }else if ((data[1] == "مديونية الايجار")){
         database db(databaseFilePath);
         QList<QList<QString>>  rentIndebtednessTable =  db.QueryRentIndebtednessTable(data[0]);
-        //مدة الايجار لكل مستأجر - من تاريخ اخر شهر مدفوع+1 الى التاريخ الحالى
-        // جمع كل الايجارات السابقة فى متغير - وسيكون هذا هو المبلغ الكلى المطلوب
-        //يتم جمع كل الايجارات المسددة
-        //الناتج هو طرح كل البند الاول - البند الثانى
+
+        double total=0;
+        ui->tableWidgetResultsTabel->setColumnCount(2);
+        ui->tableWidgetResultsTabel->setHorizontalHeaderItem(0,new QTableWidgetItem("التصنيف"));
+        ui->tableWidgetResultsTabel->setHorizontalHeaderItem(1,new QTableWidgetItem("اجمالى المبالغ"));
+        ui->tableWidgetResultsTabel->setColumnWidth(0,300);
+        ui->tableWidgetResultsTabel->setColumnWidth(1,200);
+        ui->tableWidgetResultsTabel->verticalHeader()->setVisible(false);
+
+        if (!renterChecked){
+            ui->tableWidgetResultsTabel->setRowCount(rentIndebtednessTable.size());
+            for (int i=0; i<rentIndebtednessTable.size(); i++){
+                ui->tableWidgetResultsTabel->setItem(i,0 , new QTableWidgetItem(rentIndebtednessTable[i][0]));
+                ui->tableWidgetResultsTabel->setItem(i,1 , new QTableWidgetItem(rentIndebtednessTable[i][1]));
+                total += rentIndebtednessTable[i][1].toDouble();
+
+            }
+            ui->labelResultValue->setText("الاجمالى "+QString::number(total) +" جنية");
+        }else{
+            ui->tableWidgetResultsTabel->setRowCount(1);
+            for (int i=0; i<rentIndebtednessTable.size(); i++){
+                if (rentIndebtednessTable[i][0] == data[4]){
+                    ui->tableWidgetResultsTabel->setItem(0,0 , new QTableWidgetItem(rentIndebtednessTable[i][0]));
+                    ui->tableWidgetResultsTabel->setItem(0,1 , new QTableWidgetItem(rentIndebtednessTable[i][1]));
+                    total = rentIndebtednessTable[i][1].toDouble();
+                    break;
+                }
+            }
+            ui->labelResultValue->setText("الاجمالى "+QString::number(total) +" جنية");
+
+        }
+
+
 
 
     }else if ((data[1] == "مديونية المياة")){
@@ -73,7 +102,6 @@ void query::results()
                     ui->tableWidgetResultsTabel->setItem(0,0,new QTableWidgetItem(waterIndebtednessTable[i][0]));
                     ui->tableWidgetResultsTabel->setItem(0,1,new QTableWidgetItem(waterIndebtednessTable[i][1]));
                     ui->labelResultValue->setText("الاجمالى "+waterIndebtednessTable[i][1]+" جنية");
-
                 }
             }
 
