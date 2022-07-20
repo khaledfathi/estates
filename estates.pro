@@ -14,6 +14,7 @@ CONFIG += c++17
 SOURCES += \
     about.cpp \
     database.cpp \
+    estatesedit.cpp \
     main.cpp \
     mainwindow.cpp \
     query.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     about.h \
     database.h \
+    estatesedit.h \
     mainwindow.h \
     query.h \
     rawdatabase.h \
@@ -32,6 +34,7 @@ HEADERS += \
 
 FORMS += \
     about.ui \
+    estatesedit.ui \
     mainwindow.ui \
     query.ui \
     rawdatabase.ui \

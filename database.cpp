@@ -1110,8 +1110,94 @@ QList<QList<QString>> database::QueryRentIndebtednessTable(QString estate)
     QSqlDatabase::removeDatabase("conn");
     return resultTabel;
 }
-/******************************/
 
+QList<double> database::QueryActualMoneyForPeriod(QString estate , QString dateFrom, QString dateTo)
+{
+    QList<double> resultTabel={}; //return value
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(estate));
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    QDate from = QDate::fromString(dateFrom ,"yyyy/M/d");
+    QDate to= QDate::fromString(dateTo ,"yyyy/M/d");
+
+    db.open();
+    QSqlQuery qryRentMoneyForPeriod(db);
+    double sumResultsForRent= 0;
+    qryRentMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد مياة'").arg(estateID) );
+    while (qryRentMoneyForPeriod.next()){
+        QDate recordDate = QDate::fromString(qryRentMoneyForPeriod.record().value(1).toString(), "yyyy/M/d");
+        if (recordDate >= from && recordDate <= to){
+            sumResultsForRent+= qryRentMoneyForPeriod.record().value(0).toDouble();
+        }
+    }
+    resultTabel.push_back(sumResultsForRent);
+    db.close();
+
+    db.open();
+    QSqlQuery qryWaterMoneyForPeriod(db);
+    double sumResultsForWater = 0;
+    qryWaterMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد ايجار'").arg(estateID) );
+    while (qryWaterMoneyForPeriod.next()){
+        QDate recordDate = QDate::fromString(qryWaterMoneyForPeriod.record().value(1).toString(), "yyyy/M/d");
+        if (recordDate >= from && recordDate <= to){
+            sumResultsForWater+= qryWaterMoneyForPeriod.record().value(0).toDouble();
+        }
+    }
+    resultTabel.push_back(sumResultsForWater);
+    db.close();
+
+    db.open();
+    QSqlQuery qryMaintenanceMoneyForPeriod(db);
+    double sumResultsForMaintenance= 0;
+    qryMaintenanceMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد اعمال صيانة / طوارئ'").arg(estateID) );
+    while (qryMaintenanceMoneyForPeriod.next()){
+        QDate recordDate = QDate::fromString(qryMaintenanceMoneyForPeriod.record().value(1).toString(), "yyyy/M/d");
+        if (recordDate >= from && recordDate <= to){
+            sumResultsForMaintenance+= qryMaintenanceMoneyForPeriod.record().value(0).toDouble();
+        }
+    }
+    resultTabel.push_back(sumResultsForMaintenance);
+    db.close();
+
+    db.open();
+    QSqlQuery qryRenterUnclassifiedForPeriod(db);
+    double sumResultsForRenterUnclassified= 0;
+    qryRenterUnclassifiedForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='غير مصنف'").arg(estateID) );
+    while (qryRenterUnclassifiedForPeriod.next()){
+        QDate recordDate = QDate::fromString(qryRenterUnclassifiedForPeriod.record().value(1).toString(), "yyyy/M/d");
+        if (recordDate >= from && recordDate <= to){
+            sumResultsForRenterUnclassified+= qryRenterUnclassifiedForPeriod.record().value(0).toDouble();
+        }
+    }
+    resultTabel.push_back(sumResultsForRenterUnclassified);
+    db.close();
+
+
+    db.open();
+    QSqlQuery qryOwnerUnclassifiedForPeriod(db);
+    double sumResultsForOwnerUnclassified= 0;
+    qryOwnerUnclassifiedForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and rentersID IS NULL").arg(estateID) );
+    while (qryOwnerUnclassifiedForPeriod.next()){
+        QDate recordDate = QDate::fromString(qryOwnerUnclassifiedForPeriod.record().value(1).toString(), "yyyy/M/d");
+        if (recordDate >= from && recordDate <= to){
+            sumResultsForOwnerUnclassified+= qryOwnerUnclassifiedForPeriod.record().value(0).toDouble();
+        }
+    }
+    resultTabel.push_back(sumResultsForOwnerUnclassified);
+    db.close();
+
+    QSqlDatabase::removeDatabase("conn");
+    return resultTabel;
+}
+/******************************/
 
 
 /**********************************/

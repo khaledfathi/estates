@@ -110,7 +110,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>3</number>
         </property>
         <property name="iconSize">
          <size>
@@ -424,7 +424,7 @@
                </item>
                <item>
                 <property name="text">
-                 <string>اجمالى المبالغ المحصلة عن فترة </string>
+                 <string>اجمالى المبالغ المحصلة عن فترة</string>
                 </property>
                </item>
                <item>

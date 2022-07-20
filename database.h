@@ -62,6 +62,7 @@ public:
     QList<double> QueryActualMoney (QString estate);
     QList<QList<QString>> QueryWaterIndebtednessTable(QString estate);
     QList<QList<QString>> QueryRentIndebtednessTable(QString estate);
+    QList<double> QueryActualMoneyForPeriod(QString estate, QString dateFrom ,QString dateTo);
     /******************************/
 
      //**** TEST ****

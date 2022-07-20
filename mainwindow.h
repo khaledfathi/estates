@@ -76,6 +76,7 @@ public:
     //*** Actions
     void actionButtonEstateEmpty ();
     void actionaAddEstateRecord();
+    void actionEditRemoveButton();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
@@ -125,14 +126,13 @@ private slots:
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
+    void on_buttonEstateEdit_clicked();
 
     //*** SIGNAL AND SLOT for Recipet Tab***
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
     void on_spinBoxReceiptYear_valueChanged(int arg1);
 
     //*** For Testing ***
-
-
 
 
 

@@ -11,6 +11,7 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include "query.h"
+#include "estatesedit.h""
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
@@ -188,6 +189,12 @@ void MainWindow::actionQueryReportChanges()
             ui->dateEditQueryDateTo->setDisabled(true);
             ui->comboBoxQueryRenter->setDisabled(true);
             break;
+        case 2 :
+            setQueryTabFieldsStatus(false);
+            ui->dateEditQueryDateFrom->setDisabled(true);
+            ui->dateEditQueryDateTo->setDisabled(true);
+            ui->comboBoxQueryRenter->setDisabled(true);
+            break;
         case 3:
             setQueryTabFieldsStatus(false);
             ui->dateEditQueryDateFrom->setDisabled(true);
@@ -198,13 +205,15 @@ void MainWindow::actionQueryReportChanges()
         case 4:
             setQueryTabFieldsStatus(false);
             ui->comboBoxQueryRenter->setDisabled(true);
+            ui->checkBoxQueryRenter->setDisabled(true);
             break;
         case 5 :
             setQueryTabFieldsStatus(false);
             ui->dateEditQueryDateFrom->setDisabled(true);
             ui->dateEditQueryDateTo->setDisabled(true);
+            ui->comboBoxQueryRenter->setDisabled(true);
             ui->checkBoxQueryRenter->setDisabled(true);
-            ui->checkBoxQueryRenter->setChecked(true);
+            ui->checkBoxQueryRenter->setChecked(false);
             break;
     break;
     }
@@ -235,8 +244,8 @@ void MainWindow::actionQueryButton()
         QList<QString> fieldsData ;
         fieldsData.push_back(ui->comboBoxQueryEstate->currentText());
         fieldsData.push_back(ui->comboBoxQueryReport->currentText());
-        fieldsData.push_back(ui->labelQueryDateFrom->text());
-        fieldsData.push_back(ui->labelQueryDateTo->text());
+        fieldsData.push_back(ui->dateEditQueryDateFrom->date().toString("yyyy/M/d"));
+        fieldsData.push_back(ui->dateEditQueryDateTo->date().toString("yyyy/M/d"));
         fieldsData.push_back(ui->comboBoxQueryRenter->currentText());
         bool isQueryRenterSelected = ui->checkBoxQueryRenter->isChecked();
 
@@ -796,6 +805,13 @@ void MainWindow::actionaAddEstateRecord()
     }
 }
 
+void MainWindow::actionEditRemoveButton()
+{
+    estatesedit *estateEdit = new estatesedit(this);
+    estateEdit->setModal(true);
+    estateEdit->show();
+}
+
 //*** SIGNAL AND SLOT for Estate Tab***
 void MainWindow::on_buttonEstateEmpty_clicked()
 {
@@ -810,6 +826,13 @@ void MainWindow::on_buttonEstateSave_clicked()
     actionRentersFiledsFromDatabase("MONEY");
     actionRentersFiledsFromDatabase("RECIPET");
 }
+
+void MainWindow::on_buttonEstateEdit_clicked()
+{
+    actionEditRemoveButton();
+}
+
+
 /************************************************/
 
 
