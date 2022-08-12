@@ -110,7 +110,7 @@
          <enum>QTabWidget::Rounded</enum>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>4</number>
         </property>
         <property name="iconSize">
          <size>
@@ -2438,6 +2438,8 @@
     </property>
     <addaction name="menuAboutApp"/>
     <addaction name="menuAboutQt"/>
+    <addaction name="separator"/>
+    <addaction name="menuAboutHelp"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -2445,8 +2447,19 @@
     </property>
     <addaction name="menuViewAllData"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>تعديل</string>
+    </property>
+    <addaction name="menuEditEstates"/>
+    <addaction name="menuEditRenters"/>
+    <addaction name="menuEditMoney"/>
+    <addaction name="separator"/>
+    <addaction name="menuEditWaterInvoices"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuView"/>
+   <addaction name="menuEdit"/>
    <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -2478,6 +2491,31 @@
   <action name="menuViewAllData">
    <property name="text">
     <string>جداول البيانات</string>
+   </property>
+  </action>
+  <action name="menuEditEstates">
+   <property name="text">
+    <string>تعديل/حذف سجل عقارات</string>
+   </property>
+  </action>
+  <action name="menuEditRenters">
+   <property name="text">
+    <string>تعديل/حذف سجل مستأجرين</string>
+   </property>
+  </action>
+  <action name="menuEditMoney">
+   <property name="text">
+    <string>تعديل/حذف معاملة مالية</string>
+   </property>
+  </action>
+  <action name="menuEditWaterInvoices">
+   <property name="text">
+    <string>تسجيل/تعديل فاتورة مياة</string>
+   </property>
+  </action>
+  <action name="menuAboutHelp">
+   <property name="text">
+    <string>مساعدة</string>
    </property>
   </action>
  </widget>

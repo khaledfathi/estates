@@ -11,7 +11,10 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include "query.h"
-#include "estatesedit.h""
+#include "estatesedit.h"
+#include "rentersedit.h"
+#include "moneyedit.h"
+#include "printpreview.h"
 
 /**Global**/
 QString databaseFilePath = QDir::currentPath()+"/database.sqlite3";
@@ -144,6 +147,13 @@ void MainWindow::on_menuViewAllData_triggered()
 {
     actionShowRawDatabase();
 }
+
+void MainWindow::on_menuEditWaterInvoices_triggered()
+{
+    actionShowWaterInvoiceDialog();
+}
+
+
 /************************************************/
 
 /************* Query Tab Section ***************/
@@ -566,6 +576,11 @@ void MainWindow::actionSetValidMonthsForRenter()
     ui->comboBoxMonyMonth->addItems(validMonths);
 }
 
+void MainWindow::actionEditRemoveButtonMoney()
+{
+    moneyEdit *moneyEdit_ = new moneyEdit(this);
+    moneyEdit_->show();
+}
 
 //*** SIGNAL AND SLOT for money Tab***
 void MainWindow::on_checkBoxAddFreeMoney_stateChanged(int arg1)
@@ -619,6 +634,18 @@ void MainWindow::on_doubleSpinBoxMony_valueChanged(double arg1)
 {
     actionMoneyValueChanges();
 }
+
+void MainWindow::on_buttonMoneyEdit_clicked()
+{
+    actionEditRemoveButtonMoney();
+}
+
+
+void MainWindow::on_menuEditMoney_triggered()
+{
+    actionEditRemoveButtonMoney();
+}
+
 
 //*** PUBLIC SLOTS ***
 void MainWindow::updataMoneyMonthList()
@@ -726,6 +753,13 @@ void MainWindow::actionApartmentTypeChanges()
         ui->spinBoxRenterPercent->setValue(200);
     }
 }
+
+void MainWindow::actionEditRemoveButtonRenters()
+{
+    rentersedit *renterEdit = new rentersedit(this);
+    renterEdit->show();
+}
+
 //*** SIGNAL AND SLOT for Renter Tab***
 void MainWindow::on_buttonRenterEmpty_clicked()
 {
@@ -739,10 +773,22 @@ void MainWindow::on_buttonRenterSave_clicked()
     actionRentersFiledsFromDatabase("RECIPET");
 }
 
+
+void MainWindow::on_buttonRenterEdit_clicked()
+{
+    actionEditRemoveButtonRenters();
+}
+
 void MainWindow::on_comboBoxApartmentType_currentIndexChanged(int index)
 {
     actionApartmentTypeChanges();
 }
+
+void MainWindow::on_menuEditRenters_triggered()
+{
+    actionEditRemoveButtonRenters();
+}
+
 
 /************************************************/
 
@@ -805,7 +851,7 @@ void MainWindow::actionaAddEstateRecord()
     }
 }
 
-void MainWindow::actionEditRemoveButton()
+void MainWindow::actionEditRemoveButtonEstates()
 {
     estatesedit *estateEdit = new estatesedit(this);
     estateEdit->setModal(true);
@@ -829,8 +875,14 @@ void MainWindow::on_buttonEstateSave_clicked()
 
 void MainWindow::on_buttonEstateEdit_clicked()
 {
-    actionEditRemoveButton();
+    actionEditRemoveButtonEstates();
 }
+
+void MainWindow::on_menuEditEstates_triggered()
+{
+    actionEditRemoveButtonEstates();
+}
+
 
 
 /************************************************/
@@ -850,6 +902,19 @@ void MainWindow::actionRecipetChangesYear()
     QList<QString> validMonths = db.avaliblePayMonthsForRenter(ui->comboBoxReceiptEstate->currentText() , ui->comboBoxReceiptRenter->currentText() , ui->spinBoxReceiptYear->value());
     ui->comboBoxReceiptMonth->clear();
     ui->comboBoxReceiptMonth->addItems(validMonths);
+}
+
+void MainWindow::actionPrintRecipet()
+{
+    QList<QString> data = {};
+    data.push_back(ui->comboBoxReceiptEstate->currentText());
+    data.push_back(ui->comboBoxReceiptRenter->currentText());
+    data.push_back(QString::number(ui->spinBoxReceiptYear->value()));
+    data.push_back(ui->comboBoxReceiptMonth->currentText());
+
+
+    printpreview *printPreview_ = new printpreview (this , data);
+    printPreview_->show();
 }
 
 //*** SIGNAL AND SLOT for Recipet Tab***
@@ -876,5 +941,11 @@ void MainWindow::on_spinBoxReceiptYear_valueChanged(int arg1)
 void MainWindow::clearEstatesFields()
 {
     defaultSetupUI();
+}
+
+
+void MainWindow::on_buttonPrint_clicked()
+{
+    actionPrintRecipet();
 }
 

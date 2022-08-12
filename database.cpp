@@ -1131,7 +1131,7 @@ QList<double> database::QueryActualMoneyForPeriod(QString estate , QString dateF
     db.open();
     QSqlQuery qryRentMoneyForPeriod(db);
     double sumResultsForRent= 0;
-    qryRentMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد مياة'").arg(estateID) );
+    qryRentMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد ايجار'").arg(estateID) );
     while (qryRentMoneyForPeriod.next()){
         QDate recordDate = QDate::fromString(qryRentMoneyForPeriod.record().value(1).toString(), "yyyy/M/d");
         if (recordDate >= from && recordDate <= to){
@@ -1144,7 +1144,7 @@ QList<double> database::QueryActualMoneyForPeriod(QString estate , QString dateF
     db.open();
     QSqlQuery qryWaterMoneyForPeriod(db);
     double sumResultsForWater = 0;
-    qryWaterMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد ايجار'").arg(estateID) );
+    qryWaterMoneyForPeriod.exec(QString("SELECT money.المبلغ_المدفوع , money.تاريخ_العملية FROM money WHERE estatesID=%1  and نوع_المعاملة='سداد مياة'").arg(estateID) );
     while (qryWaterMoneyForPeriod.next()){
         QDate recordDate = QDate::fromString(qryWaterMoneyForPeriod.record().value(1).toString(), "yyyy/M/d");
         if (recordDate >= from && recordDate <= to){
@@ -1196,6 +1196,54 @@ QList<double> database::QueryActualMoneyForPeriod(QString estate , QString dateF
 
     QSqlDatabase::removeDatabase("conn");
     return resultTabel;
+}
+/******************************/
+
+
+/******* Print Recipet*********/
+QList<QString> database::QueryForPrintRecipt(QList<QString> data)
+{
+    QList<QString> result={};
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE" , "conn");
+    db.setDatabaseName(databaseFile);
+    //get estateID from estates table
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(data[0]);
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get Rent value
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(data[0]);
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get Address
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(data[0]);
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    //get Rent value
+    db.open();
+    QSqlQuery qryEstateID(db);
+    qryEstateID.exec(QString("SELECT estates.ID FROM estates WHERE estates.اسم_رمزى_للعقار='%1'").arg(data[0]);
+    qryEstateID.next();
+    QString estateID = qryEstateID.record().value(0).toString();
+    db.close();
+
+    QSqlDatabase::removeDatabase("conn");
+
+    return result;
+
+
 }
 /******************************/
 

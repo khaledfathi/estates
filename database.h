@@ -65,6 +65,10 @@ public:
     QList<double> QueryActualMoneyForPeriod(QString estate, QString dateFrom ,QString dateTo);
     /******************************/
 
+    /******* Print Recipet*********/
+    QList<QString> QueryForPrintRecipt(QList<QString> data);
+    /******************************/
+
      //**** TEST ****
     void QueryAllFromTable(QTreeView *resultTable , QString tableName);
 

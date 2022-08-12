@@ -58,6 +58,7 @@ public:
     void actionSetRemainingRemainingValue();
     void actionMoneyValueChanges();
     void actionSetValidMonthsForRenter();
+    void actionEditRemoveButtonMoney();
     /***********************************************/
 
     /************* Renter Tab Section ***************/
@@ -68,6 +69,7 @@ public:
     //*** Actions
     void actionButtonRenterEmpty();
     void actionaAddRenterRecord();
+    void actionEditRemoveButtonRenters();
     /************************************************/
 
     /************* Estate Tab Section ***************/
@@ -76,13 +78,14 @@ public:
     //*** Actions
     void actionButtonEstateEmpty ();
     void actionaAddEstateRecord();
-    void actionEditRemoveButton();
+    void actionEditRemoveButtonEstates();
     /************************************************/
 
     /************* Recipet Tab Section ***************/
     void defaultReceiptTabUI();
     //*** Actions
     void actionRecipetChangesYear();
+    void actionPrintRecipet();
 
     /************************************************/
 
@@ -95,14 +98,13 @@ private slots:
     void on_menuAboutApp_triggered();
     void on_tabWidgetMain_currentChanged(int index);
     void on_menuViewAllData_triggered();
-
+    void on_menuEditWaterInvoices_triggered();
 
     //*** SIGNAL AND SLOT for Query Tab ***
     void on_comboBoxQueryReport_currentIndexChanged(int index);
     void on_checkBoxQueryRenter_stateChanged(int arg1);
     void on_buttonQuery_clicked();
     void on_comboBoxQueryEstate_currentIndexChanged(int index);
-
 
     //*** SIGNAL AND SLOT for Money Tab ***
     void on_checkBoxAddFreeMoney_stateChanged(int arg1);
@@ -115,25 +117,28 @@ private slots:
     void on_comboBoxMonyMonth_currentIndexChanged(int index);
     void on_comboBoxMoneyRenter_currentIndexChanged(int index);
     void on_doubleSpinBoxMony_valueChanged(double arg1);
-
-
+    void on_buttonMoneyEdit_clicked();
+    void on_menuEditMoney_triggered();
 
     //*** SIGNAL AND SLOT for Renter Tab***
     void on_buttonRenterEmpty_clicked();
     void on_buttonEstateEmpty_clicked();
     void on_buttonRenterSave_clicked();
     void on_comboBoxApartmentType_currentIndexChanged(int index);
+    void on_buttonRenterEdit_clicked();
+    void on_menuEditRenters_triggered();
 
     //*** SIGNAL AND SLOT for Estates Tab***
     void on_buttonEstateSave_clicked();
     void on_buttonEstateEdit_clicked();
+    void on_menuEditEstates_triggered();
 
     //*** SIGNAL AND SLOT for Recipet Tab***
     void on_comboBoxReceiptEstate_currentIndexChanged(int index);
     void on_spinBoxReceiptYear_valueChanged(int arg1);
+    void on_buttonPrint_clicked();
 
     //*** For Testing ***
-
 
 
 

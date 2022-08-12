@@ -7,4 +7,7 @@
         <file>icon/estate.png</file>
         <file>icon/resit.png</file>
     </qresource>
+    <qresource prefix="/textFiles">
+        <file>html.html</file>
+    </qresource>
 </RCC>

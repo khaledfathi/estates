@@ -17,8 +17,11 @@ SOURCES += \
     estatesedit.cpp \
     main.cpp \
     mainwindow.cpp \
+    moneyedit.cpp \
+    printpreview.cpp \
     query.cpp \
     rawdatabase.cpp \
+    rentersedit.cpp \
     validation.cpp \
     waterinvoice.cpp
 
@@ -27,8 +30,11 @@ HEADERS += \
     database.h \
     estatesedit.h \
     mainwindow.h \
+    moneyedit.h \
+    printpreview.h \
     query.h \
     rawdatabase.h \
+    rentersedit.h \
     validation.h \
     waterinvoice.h
 
@@ -36,8 +42,11 @@ FORMS += \
     about.ui \
     estatesedit.ui \
     mainwindow.ui \
+    moneyedit.ui \
+    printpreview.ui \
     query.ui \
     rawdatabase.ui \
+    rentersedit.ui \
     waterinvoice.ui
 
 # Default rules for deployment.
@@ -49,4 +58,4 @@ RESOURCES += \
     resourse.qrc
 
 DISTFILES += \
-    a.html
+    html.html
